@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesAI Cockpit — Protótipo (Varejo)</title>
+<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgen.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+  :root{--navy:#12233A;--navy2:#1b3350;--red:#E4572E;--coral:#F26A4B;--grey:#5A6472;--light:#EAF0F5;--bg:#F4F6F9;--ok:#1E7A46;--warn:#C9A227}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:var(--bg);color:var(--navy)}
+  header{background:var(--navy);color:#fff;padding:14px 26px;display:flex;align-items:center;gap:14px}
+  header .logo{width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,var(--red),var(--coral));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px}
+  header h1{font-size:18px;margin:0}header .sub{color:#9fb0c4;font-size:12px;margin-top:2px}
+  header .cfgbtn{margin-left:auto;background:#ffffff14;border:1px solid #ffffff33;color:#e7eef6;font-size:12.5px;padding:8px 13px;border-radius:9px;cursor:pointer;font-weight:600}
+  header .cfgbtn:hover{background:#ffffff26}
+  .ctxbar{background:#0d1b2e;color:#a9bcd0;font-size:12px;padding:7px 26px;border-bottom:1px solid #223247}
+  .ctxbar b{color:#fff}.ctxbar .vtag{background:var(--red);color:#fff;padding:2px 9px;border-radius:20px;font-size:10.5px;font-weight:700;margin-left:6px}
+  .wrap{display:flex;gap:18px;padding:18px 26px;align-items:flex-start;max-width:1320px;margin:0 auto}
+  .panel{background:#fff;border:1px solid #e3e9f0;border-radius:14px;box-shadow:0 1px 3px #0000000d}
+  .side{width:330px;flex:none;padding:18px}
+  .side h2{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--grey);margin:0 0 10px}
+  select,.btn,input,textarea{font-size:14px;font-family:inherit}
+  select{width:100%;padding:10px;border:1px solid #cfd8e3;border-radius:9px;background:#fff;color:var(--navy)}
+  .toggle{display:flex;background:var(--light);border-radius:10px;padding:4px;margin:14px 0 8px}
+  .toggle button{flex:1;border:0;background:transparent;padding:9px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--grey);cursor:pointer}
+  .toggle button.on{background:#fff;color:var(--navy);box-shadow:0 1px 3px #0000001a}
+  .src{display:flex;align-items:center;gap:9px;padding:9px 10px;border:1px solid #e3e9f0;border-radius:9px;margin-bottom:7px}
+  .src input[type=checkbox]{width:16px;height:16px;accent-color:var(--red);cursor:pointer}
+  .src .srcinfo{display:flex;align-items:center;gap:9px;flex:1;cursor:pointer}
+  .src .ic{width:22px;text-align:center;font-size:15px}
+  .src .nm{font-size:13.5px;font-weight:600}.src .st{font-size:10.5px;color:var(--grey)}
+  .src .badge{font-size:9.5px;padding:2px 7px;border-radius:10px;font-weight:700;cursor:pointer}
+  .badge.con{background:#e7f4ec;color:var(--ok)}.badge.off{background:#fdecea;color:#b3382a}
+  .src.notcon{opacity:.7}
+  .btn{margin-top:8px;padding:12px;border:0;border-radius:10px;font-weight:700;cursor:pointer;width:100%}
+  .btn.primary{background:var(--red);color:#fff}.btn.primary:hover{background:#cf4a24}
+  .btn.ghost{background:#fff;border:1px solid #cfd8e3;color:var(--navy)}.btn.ghost:hover{background:var(--light)}
+  .main{flex:1;min-width:0}
+  .empty{padding:56px 30px;text-align:center;color:var(--grey)}.empty .big{font-size:44px;margin-bottom:8px}
+  .rep{padding:20px}
+  .rhead{display:flex;align-items:center;gap:16px;border-bottom:1px solid #eef2f6;padding-bottom:14px;margin-bottom:14px}
+  .rhead .co{font-size:21px;font-weight:800}.rhead .meta{color:var(--grey);font-size:13px;margin-top:3px}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .chip{font-size:11px;padding:4px 10px;border-radius:20px;background:var(--light);color:var(--navy2);font-weight:600}
+  .predcard{display:flex;gap:18px;align-items:center;border:1px solid #e9eef4;border-radius:12px;padding:14px 16px;margin-bottom:14px;flex-wrap:wrap}
+  .predcard .pg{text-align:center}.predcard .pg small{display:block;font-size:10.5px;color:var(--grey);text-transform:uppercase;letter-spacing:.05em;margin-top:-6px}
+  .predcard .sem{flex:1;min-width:230px}
+  .predcard .sem h3{margin:0 0 8px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--red)}
+  .flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:12px}
+  .flow .n{padding:6px 9px;border-radius:8px;font-weight:700}
+  .flow .dor{background:#fdecea;color:#b3382a}.flow .vec{background:#eaf0f5;color:var(--navy2)}.flow .prod{background:var(--navy);color:#fff}
+  .flow .ar{color:var(--grey);font-weight:800}
+  .matchpct{display:inline-block;margin-left:6px;font-size:11px;color:var(--ok);font-weight:800}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  .card{border:1px solid #e9eef4;border-radius:12px;padding:14px 16px}
+  .card h3{margin:0 0 10px;font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--red)}
+  .card.full{grid-column:1/3}
+  ul.clean{margin:0;padding-left:18px}ul.clean li{margin:6px 0;font-size:13.5px;line-height:1.45}
+  .kv{font-size:13px;margin:5px 0}.kv b{color:var(--navy)}
+  .sig{display:flex;gap:10px;padding:8px 0;border-bottom:1px dashed #eef2f6;font-size:13px}.sig:last-child{border:0}
+  .sig .s-ic{width:22px;text-align:center}.sig .s-src{font-size:10px;color:var(--grey);text-transform:uppercase;letter-spacing:.04em}
+  .notebox{background:#fff7f4;border:1px solid #f5d3c7;color:#8a3b22;font-size:12.5px;padding:10px 12px;border-radius:9px;margin-bottom:14px}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+  .kpi{background:var(--light);border-radius:10px;padding:12px;text-align:center}
+  .kpi .n{font-size:20px;font-weight:800;color:var(--red)}.kpi .l{font-size:10.5px;color:var(--grey);margin-top:2px}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}.actions .btn{width:auto;padding:12px 18px}
+  .foot{max-width:1320px;margin:0 auto;padding:6px 26px 26px;color:#9aa6b4;font-size:11px}
+  dialog{border:0;border-radius:14px;padding:0;max-width:560px;width:92%;box-shadow:0 20px 60px #0003}
+  dialog::backdrop{background:#0b18268c}
+  .dlg{padding:22px 24px}.dlg h3{margin:0 0 3px;color:var(--navy);font-size:18px}.dlg p{color:var(--grey);font-size:12.5px;margin:0 0 16px}
+  .fld{margin-bottom:12px}.fld label{display:block;font-size:11.5px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.04em;margin-bottom:5px}
+  .fld input,.fld textarea,.fld select{width:100%;padding:9px 11px;border:1px solid #cfd8e3;border-radius:9px;color:var(--navy)}
+  .fld textarea{min-height:56px;resize:vertical}.fld .hint,.simnote{font-size:10.5px;color:#8a94a3;margin-top:3px}
+  .simnote{background:#f4f7fb;border:1px dashed #cfd8e3;color:#5a6472;padding:8px 10px;border-radius:8px;margin:4px 0 12px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .conn{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid #e9eef4;border-radius:10px;margin-bottom:8px}
+  .conn .ic{font-size:16px}.conn .g{flex:1}.conn .nm{font-weight:700;font-size:13.5px}.conn .ds{font-size:11.5px;color:var(--grey)}
+  .conn .add{font-size:11px;font-weight:700;color:var(--red);border:1px solid var(--red);background:#fff;border-radius:8px;padding:5px 10px;cursor:pointer}
+  @media(max-width:900px){.wrap{flex-direction:column}.side{width:100%}.grid,.kpis{grid-template-columns:1fr}.card.full{grid-column:1}}
+  #login{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:1000}
+  #login .box{background:#fff;border-radius:16px;padding:34px 32px;width:340px;box-shadow:0 20px 60px #0006;text-align:center}
+  #login .lg{width:54px;height:54px;border-radius:13px;margin:0 auto 14px;background:linear-gradient(135deg,var(--red),var(--coral));display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:25px}
+  #login h2{margin:0 0 2px;color:var(--navy);font-size:20px}#login .s{color:var(--grey);font-size:12.5px;margin-bottom:18px}
+  #login input{width:100%;padding:11px 12px;border:1px solid #cfd8e3;border-radius:9px;margin-bottom:10px;font-size:14px}
+  #login .err{color:#b3382a;font-size:12px;min-height:16px;margin-bottom:6px}
+  #login .hint{color:#8a94a3;font-size:11px;margin-top:12px}
+  #login button{width:100%;padding:12px;border:0;border-radius:10px;background:var(--red);color:#fff;font-weight:700;font-size:14px;cursor:pointer}
+  #login button:hover{background:#cf4a24}
+  .logoutbtn{background:transparent;border:0;color:#9fb0c4;font-size:12px;cursor:pointer;margin-left:12px}.logoutbtn:hover{color:#fff}
+  .src.locked{opacity:.5}.src.locked .srcinfo{cursor:not-allowed}.badge.prem{background:#f3ecd6;color:#8a6d1f;cursor:pointer}
+  .jtbd{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .jtbd .j{background:var(--light);border-radius:10px;padding:11px 12px}
+  .jtbd .j .t{font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--red);font-weight:700;margin-bottom:4px}
+  .jtbd .j .d{font-size:12.5px;line-height:1.4}
+  .gov{margin-top:14px;background:#f4f7fb;border:1px dashed #cfd8e3;border-radius:9px;padding:9px 12px;font-size:11.5px;color:#5a6472;display:flex;gap:14px;flex-wrap:wrap;align-items:center}
+  .gov b{color:var(--navy)}
+  .learnnote{margin-top:10px;font-size:12px;color:#5a6472;background:#eef7f0;border:1px solid #cfe6d5;border-radius:8px;padding:8px 11px}
+  .aboutbtn{background:transparent;border:0;color:#9fb0c4;font-size:12px;cursor:pointer;margin-left:8px}.aboutbtn:hover{color:#fff}
+  @media(max-width:900px){.jtbd{grid-template-columns:1fr}}
+  .jira-issue{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px dashed #eef2f6;font-size:12.5px}
+  .jira-issue .jk{font-weight:800;color:#2f6fdb;background:#eaf1fc;border-radius:6px;padding:2px 7px;font-size:11px}
+  .jira-issue .jst{margin-left:auto;font-size:10px;font-weight:700;color:#5a6472;background:#eef2f6;border-radius:10px;padding:2px 8px}
+  .est{font-size:27px;font-weight:800;color:var(--red);margin:4px 0 2px}.est small{font-size:12px;color:var(--grey);font-weight:600}
+  .posq{font-size:12px;font-style:italic;color:var(--navy2);background:#eaf0f5;border-radius:8px;padding:9px 11px;margin:2px 0 12px}
+  .attn{display:flex;align-items:center;gap:12px;justify-content:space-between;border:1px solid #e9eef4;border-left:4px solid #C9A227;border-radius:10px;padding:11px 14px;margin-bottom:9px;background:#fff}
+  .attn.hi{border-left-color:var(--red);background:#fff7f4}.attn .au{font-size:11px;font-weight:700;color:var(--navy)}.attn .ar{font-size:12.5px;color:var(--grey);margin-top:3px}
+  .valuestrip{background:#0d1b2e;color:#c9d7e6;font-size:12px;border-radius:9px;padding:9px 12px;margin-bottom:14px}
+  .itag{font-size:9px;font-weight:700;color:#2f6fdb;background:#eaf1fc;border-radius:10px;padding:2px 7px;margin-left:6px;letter-spacing:0}
+  .dstat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
+  .dstat .d{background:var(--light);border-radius:8px;padding:8px;text-align:center}.dstat .d .n{font-size:16px;font-weight:800;color:var(--navy)}.dstat .d .l{font-size:9.5px;color:var(--grey);margin-top:1px}
+</style>
+</head>
+<body>
+<div id="login"><div class="box">
+  <div class="lg"><svg viewBox="0 0 40 40" width="34" height="34" aria-hidden="true"><path d="M8 28 A12 12 0 0 1 32 28" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><line x1="20" y1="28" x2="28" y2="17" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><circle cx="20" cy="28" r="2.6" fill="#fff"/></svg></div>
+  <h2>SAIC</h2>
+  <div class="s">SalesAI Cockpit · acesso seguro</div>
+  <input id="lg-user" placeholder="Usuário" autocomplete="off" onkeydown="if(event.key==='Enter')doLogin()">
+  <input id="lg-pass" type="password" placeholder="Senha" onkeydown="if(event.key==='Enter')doLogin()">
+  <div class="err" id="lg-err"></div>
+  <button onclick="doLogin()">Entrar</button>
+  <div class="hint">🔒 Demonstração — Enterprise: user01/12345 · Pro: user02/67890 · Freemium: user03/qwert</div>
+</div></div>
+<dialog id="upDlg"><div class="dlg">
+  <h3>🔒 Recurso de plano superior</h3>
+  <p>Este conector não está disponível no seu plano atual. Freemium: apenas CRM. Pro: CRM, E-mail, Teams e Notícias. Enterprise: todas as fontes, incluindo Slack, WhatsApp, Reuniões e o Jira (Delivery Intelligence). Faça upgrade para desbloquear.</p>
+  <button class="btn primary" onclick="document.getElementById('upDlg').close()">Entendi</button>
+</div></dialog>
+<header>
+  <div class="logo"><svg viewBox="0 0 40 40" width="24" height="24" aria-hidden="true"><path d="M8 28 A12 12 0 0 1 32 28" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round"/><line x1="20" y1="28" x2="28" y2="17" stroke="#fff" stroke-width="2.8" stroke-linecap="round"/><circle cx="20" cy="28" r="2.6" fill="#fff"/></svg></div>
+  <div><h1>SAIC <span style="font-weight:400;font-size:13px;color:#9fb0c4">· SalesAI Cockpit</span></h1><div class="sub">Da recomendação à viabilidade — contexto 360°, decisão preditiva e orquestração Sales ↔ Delivery</div></div>
+  <button class="cfgbtn" onclick="openCfg()">⚙ Minha Empresa</button>
+  <button class="aboutbtn" onclick="openAbout()">ⓘ Sobre</button>
+  <button class="logoutbtn" onclick="logout()">Sair</button>
+</header>
+<div class="ctxbar" id="ctxbar"></div>
+
+<div class="wrap">
+  <div class="panel side">
+    <h2>1 · Cliente a abordar</h2>
+    <select id="client"></select>
+    <h2 style="margin-top:18px">2 · Fontes de dados</h2>
+    <div class="toggle">
+      <button id="tg-crm" class="on" onclick="setScope('crm')">Somente CRM</button>
+      <button id="tg-all" onclick="setScope('all')">Todas as fontes</button>
+    </div>
+    <div id="srcs"></div>
+    <div style="font-size:10.5px;color:#8a94a3;margin:2px 2px 8px">Clique em uma fonte para configurar a integração e o que buscar.</div>
+    <button class="btn primary" onclick="generate()">Gerar relatório</button>
+    <button class="btn ghost" onclick="openConns()">Sugerir conexões</button>
+  </div>
+  <div class="panel main" id="main">
+    <div class="empty"><div class="big">🛰️</div><div><b>Configure sua empresa</b> em "⚙ Minha Empresa", conecte as fontes, selecione o cliente e clique em <b>Gerar relatório</b>.</div>
+    <div style="margin-top:6px;font-size:13px">Compare "Somente CRM" com "Todas as fontes" e veja a propensão ao fechamento subir.</div></div>
+  </div>
+</div>
+<div class="foot">SalesAI Cockpit — protótipo de demonstração (FIAP · Grupo #1028). Dados fictícios; integrações simuladas. Arquitetura mapeável para Oracle (Database 23ai Vector Search, OCI GenAI/Speech, OML, APEX, OIC).</div>
+
+<dialog id="cfgDlg"><div class="dlg">
+  <h3>⚙ Minha Empresa</h3><p>Estes dados personalizam o relatório, o pitch e a apresentação — deixando a ferramenta com a cara do seu mercado.</p>
+  <div class="row2">
+    <div class="fld"><label>Nome da empresa</label><input id="c-nome"></div>
+    <div class="fld"><label>Ramo / vertical</label><select id="c-ramo"><option>Varejo</option><option>Farmacêutico</option><option>Saúde / Medicina</option><option>Logística</option><option>Serviços Financeiros</option><option>Tecnologia</option><option>Outro</option></select></div>
+  </div>
+  <div class="fld"><label>O que você vende</label><input id="c-oferta"><div class="hint">Ex.: Plataforma de gestão omnichannel para o varejo.</div></div>
+  <div class="fld"><label>Quem somos</label><textarea id="c-quem"></textarea></div>
+  <div class="row2">
+    <div class="fld"><label>Diferenciais (um por linha)</label><textarea id="c-dif"></textarea></div>
+    <div class="fld"><label>Benefícios / resultados (um por linha)</label><textarea id="c-ben"></textarea></div>
+  </div>
+  <div class="fld"><label>Perfil de cliente ideal (ICP)</label><input id="c-icp"></div>
+  <div style="display:flex;gap:10px;margin-top:6px"><button class="btn primary" style="flex:1" onclick="saveCfg()">Salvar</button><button class="btn ghost" style="flex:1" onclick="document.getElementById('cfgDlg').close()">Cancelar</button></div>
+</div></dialog>
+
+<dialog id="srcDlg"><div class="dlg">
+  <h3 id="scTitle">Conectar fonte</h3><p>Configure a integração e defina o que o SalesAI deve buscar nesta fonte.</p>
+  <div id="scBody"></div>
+  <div class="simnote">🔒 Conexão simulada (protótipo). Nenhuma credencial real é enviada ou armazenada em servidor.</div>
+  <div style="display:flex;gap:10px"><button class="btn primary" id="scConnect" style="flex:1" onclick="connectSrc()">Conectar</button>
+    <button class="btn ghost" id="scDisc" style="flex:1;display:none" onclick="disconnectSrc()">Desconectar</button>
+    <button class="btn ghost" style="flex:1" onclick="document.getElementById('srcDlg').close()">Fechar</button></div>
+</div></dialog>
+
+<dialog id="connDlg"><div class="dlg">
+  <h3>Conexões sugeridas</h3><p>Fontes adicionais para enriquecer ainda mais a abordagem.</p>
+  <div id="connList"></div>
+  <button class="btn ghost" onclick="document.getElementById('connDlg').close()">Fechar</button>
+</div></dialog>
+
+<dialog id="aboutDlg"><div class="dlg">
+  <h3>ⓘ Sobre este protótipo</h3>
+  <p>Protótipo de <b>alta fidelidade</b> com <b>dados fictícios</b> e integrações simuladas — feito para <b>aprender e validar a experiência</b>, não como produto final (MVP no sentido de experimento, à la Lean Startup).</p>
+  <div style="font-size:13px;line-height:1.6">
+    <b>Hipóteses que estamos testando:</b>
+    <ul class="clean">
+      <li><b>Problema:</b> o vendedor B2B perde venda por preparo fragmentado e lento.</li>
+      <li><b>Job:</b> ele quer preparar a reunião em minutos, com contexto e confiança.</li>
+      <li><b>Solução:</b> um cockpit que enriquece o CRM e recomenda a abordagem eleva conversão.</li>
+      <li><b>Sales ↔ Delivery:</b> aprender com o que a empresa já entregou (Jira) para estimar a viabilidade/horas aumenta a assertividade da proposta.</li>
+    </ul>
+    <b>Ciclo:</b> Construir → Medir → Aprender (o botão "Registrar resultado" fecha o loop).
+  </div>
+  <button class="btn primary" onclick="document.getElementById('aboutDlg').close()">Entendi</button>
+</div></dialog>
+
+<dialog id="outcomeDlg"><div class="dlg">
+  <h3>📝 Registrar resultado da reunião</h3>
+  <p>Fecha o ciclo Construir–Medir–Aprender: o resultado realimenta o score de propensão do modelo.</p>
+  <div class="fld"><label>Resultado</label><select id="oc-res"><option>Ganhou</option><option>Em andamento</option><option>Perdeu</option></select></div>
+  <div class="fld"><label>Próximo passo</label><input id="oc-next" placeholder="Ex.: enviar proposta, agendar POC..."></div>
+  <div class="fld"><label>Motivo / aprendizado</label><input id="oc-why" placeholder="O que pesou na decisão?"></div>
+  <div class="fld"><label>Horas reais entregues (se ganhou e já entregue)</label><input id="oc-hrs" placeholder="Ex.: 1720 — realimenta a estimativa de delivery"></div>
+  <div style="display:flex;gap:10px"><button class="btn primary" style="flex:1" onclick="saveOutcome()">Salvar aprendizado</button><button class="btn ghost" style="flex:1" onclick="document.getElementById('outcomeDlg').close()">Cancelar</button></div>
+</div></dialog>
+
+<dialog id="jiraDlg"><div class="dlg">
+  <h3>🧩 Sales ↔ Delivery — viabilidade do que você está prestes a vender</h3>
+  <p>O SalesAI aprende com o que a empresa já entregou (histórico do Jira) para estimar as horas e a viabilidade do projeto do prospect.</p>
+  <div id="jiraBody"></div>
+  <button class="btn ghost" style="margin-top:10px" onclick="document.getElementById('jiraDlg').close()">Fechar</button>
+</div></dialog>
+
+<script>
+// ---------- Minha Empresa ----------
+const DEFAULT_COMPANY={nome:'Varejo360 Soluções',ramo:'Varejo',oferta:'Plataforma de gestão omnichannel para o varejo (estoque, PDV e analytics)',
+  quem:'Somos uma empresa de tecnologia para o varejo. Ajudamos redes a unificar loja física e digital, reduzir ruptura de estoque e vender mais com dados.',
+  dif:['Implantação rápida sem trocar o ERP','Visão única de estoque entre todas as lojas','Analytics de vendas e previsão de demanda em tempo real'],
+  ben:['Reduz ruptura de estoque em até 30%','Aumenta a conversão em loja com recomendação','Menos tempo em tarefas manuais de gestão'],
+  icp:'Redes de varejo de médio/grande porte com múltiplas lojas e e-commerce'};
+let COMPANY=load('salesai_company',DEFAULT_COMPANY);
+function load(k,def){try{const s=localStorage.getItem(k);if(s)return JSON.parse(s);}catch(e){}return JSON.parse(JSON.stringify(def));}
+function save(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function ctx(){document.getElementById('ctxbar').innerHTML='Você: <b>'+COMPANY.nome+'</b> <span class="vtag">'+COMPANY.ramo+'</span> &nbsp;·&nbsp; vende: '+COMPANY.oferta+' &nbsp;·&nbsp; Plano: <b>'+(PLAN_LABEL[PLAN]||'Freemium')+'</b>';}
+function openCfg(){const g=id=>document.getElementById(id);g('c-nome').value=COMPANY.nome;g('c-ramo').value=COMPANY.ramo;g('c-oferta').value=COMPANY.oferta;g('c-quem').value=COMPANY.quem;g('c-dif').value=COMPANY.dif.join('\n');g('c-ben').value=COMPANY.ben.join('\n');g('c-icp').value=COMPANY.icp;g('cfgDlg').showModal();}
+function saveCfg(){const v=id=>document.getElementById(id).value.trim();const lines=id=>v(id).split('\n').map(x=>x.trim()).filter(Boolean);
+  COMPANY={nome:v('c-nome')||'Minha Empresa',ramo:v('c-ramo'),oferta:v('c-oferta'),quem:v('c-quem'),dif:lines('c-dif'),ben:lines('c-ben'),icp:v('c-icp')};
+  save('salesai_company',COMPANY);ctx();document.getElementById('cfgDlg').close();if(CURRENT)generate();}
+
+// ---------- Fontes + integração ----------
+const SOURCES=[
+  {id:'crm',nm:'CRM',ic:'🗂️',on:true,core:true,providers:['HubSpot','Salesforce','Pipedrive'],cred:'apikey',hint:'Contas, contatos, histórico e oportunidades.'},
+  {id:'email',nm:'E-mail',ic:'✉️',on:true,providers:['Microsoft Outlook / 365','Google Gmail'],cred:'oauth',hint:'E-mails trocados com a empresa: propostas, dúvidas, tom.'},
+  {id:'teams',nm:'MS Teams',ic:'💬',on:true,providers:['Microsoft 365'],cred:'oauth',hint:'Menções ao cliente em canais e chats internos.'},
+  {id:'slack',nm:'Slack',ic:'#️⃣',on:true,providers:['Slack Workspace'],cred:'token',hint:'Nome da empresa em #deals, #leads, #success.'},
+  {id:'wpp',nm:'WhatsApp',ic:'📱',on:false,providers:['WhatsApp Business Cloud API','Twilio'],cred:'apikey',hint:'Conversas comerciais. Requer consentimento (LGPD).'},
+  {id:'reunioes',nm:'Reuniões',ic:'🎙️',on:false,providers:['OCI Speech','Zoom','Google Meet'],cred:'oauth',hint:'Transcrever reuniões e extrair dores e próximos passos.'},
+  {id:'news',nm:'Notícias web',ic:'📰',on:true,providers:['Busca de notícias'],cred:'none',hint:'Notícias recentes: expansão, aportes, lançamentos.'},
+  {id:'jira',nm:'Jira (Delivery)',ic:'🧩',on:false,special:'jira',providers:['Jira Cloud','Jira Data Center'],cred:'apikey',hint:'Histórico de entregas para estimar esforço e viabilidade (Delivery Intelligence).'},
+];
+let SRCCFG=load('salesai_srccfg',{}); let scope='crm',currentSrc=null,CURRENT=null,PLAN='enterprise';
+let LEARN=load('salesai_learn',[]); let AUDIT=load('salesai_audit',0);
+let JIRA=load('salesai_jira',{connected:false,url:'',email:'',project:'DEL'}); let JIRAISSUES=load('salesai_jira_issues',[]);
+let DELIVERY=load('salesai_delivery',[]);
+const CLIENT_EXTRA={
+  nordeste:{alert:{txt:'Renovação de contrato vence em 45 dias + expansão de 15 lojas anunciada.',urg:'alta'},ops:['Renovação do contrato de analytics (R$ 180k/ano)','Upsell: módulo de integração com o ERP'],follow:['Responder a Ana com case de ROI (parada há 12 dias)','Confirmar reunião com o CIO (marcada no Slack)']},
+  modaviva:{alert:{txt:'Conta nova quente: 25 franquias anunciadas; 1ª reunião agendada.',urg:'média'},ops:['Novo contrato — gestão de estoque de franquias (R$ 120k/ano)'],follow:['Preparar apresentação curta e prática (pedido do Rafael)']},
+  superfrescos:{alert:{txt:'Proposta há 9 dias sem resposta — e-mail reaberto ontem (sinal de compra).',urg:'alta'},ops:['Proposta em aberto (R$ 240k/ano) — previsão de demanda + PDV'],follow:['Enviar material de redução de perdas (pedido no WhatsApp)','Reagendar contato — proposta esfriando']},
+  techhouse:{alert:{txt:'Black Friday em 4 meses — estoque unificado é pré-requisito.',urg:'média'},ops:['Projeto omnichannel de estoque (R$ 160k/ano)'],follow:['Enviar demo de estoque unificado (pedido do Bruno)']},
+  belacasa:{alert:{txt:'Indicação quente de cliente satisfeito — momento ideal de abordagem.',urg:'média'},ops:['Novo contrato — omnichannel + fidelidade (R$ 110k/ano)'],follow:['Aproveitar a indicação e agendar diagnóstico']},
+};
+const PLAN_ACCESS={enterprise:['crm','email','teams','slack','wpp','reunioes','news','jira'],pro:['crm','email','teams','news'],free:['crm']};
+const PLAN_LABEL={enterprise:'Enterprise',pro:'Pro',free:'Freemium'};
+const isLocked=id=>!(PLAN_ACCESS[PLAN]||PLAN_ACCESS.free).includes(id);
+function srcState(id){return SOURCES.find(x=>x.id===id);}
+
+function srcOn(s){return s.special==='jira'?JIRA.connected:s.on;}
+function initSources(){const box=document.getElementById('srcs');box.innerHTML='';
+  SOURCES.forEach(s=>{const lk=isLocked(s.id);const cfg=SRCCFG[s.id]||{};const on=srcOn(s);
+    const act=lk?'showUpgrade()':(s.special==='jira'?'openJira()':`openSrcCfg('${s.id}')`);
+    const st=lk?'Indisponível no seu plano':(s.special==='jira'?(on?(JIRA.project||'Delivery Intelligence'):'Delivery Intelligence — histórico de entregas'):((on&&cfg.provider)?cfg.provider:(on?'conectado':s.providers[0])));
+    const row=document.createElement('div');row.className='src'+(lk?' locked':(on?'':' notcon'));row.id='src-'+s.id;
+    const badge=lk?`<span class="badge prem" onclick="showUpgrade()">🔒 ${PLAN==='free'?'Pro/Ent.':'Enterprise'}</span>`:`<span class="badge ${on?'con':'off'}" onclick="${act}">${on?'conectado':'conectar'}</span>`;
+    row.innerHTML=`<input type="checkbox" ${s.id==='crm'?'checked':''} data-id="${s.id}" onclick="event.stopPropagation()">
+      <div class="srcinfo" onclick="${act}"><span class="ic">${s.ic}</span><span><span class="nm">${s.nm}</span><br><span class="st">${st}</span></span></div>
+      ${badge}`;
+    box.appendChild(row);});
+  applyScope();}
+function setScope(v){scope=v;document.getElementById('tg-crm').classList.toggle('on',v==='crm');document.getElementById('tg-all').classList.toggle('on',v==='all');applyScope();}
+function applyScope(){SOURCES.forEach(s=>{const row=document.getElementById('src-'+s.id);if(!row)return;const cb=row.querySelector('input');const lk=isLocked(s.id);const on=srcOn(s);
+  if(s.id==='crm'){cb.checked=true;cb.disabled=true;return;}
+  cb.disabled=!on||lk; cb.checked=(scope==='all'&&on&&!lk);});}
+function selectedSources(){return [...document.querySelectorAll('#srcs input:checked')].map(c=>c.dataset.id);}
+
+// ---- modal de integração por fonte ----
+function openSrcCfg(id){if(isLocked(id)){showUpgrade();return;}const s=srcState(id),c=SRCCFG[id]||{};let creds='';
+  if(s.cred==='oauth')creds=`<div class="fld"><label>Usuário</label><input id="sc-user" placeholder="voce@empresa.com" value="${c.user||''}"></div><div class="fld"><label>Senha</label><input id="sc-pass" type="password" placeholder="••••••••"></div>`;
+  else if(s.cred==='apikey')creds=`<div class="fld"><label>API Key / Token</label><input id="sc-user" placeholder="cole a chave da API" value="${c.user||''}"></div>`;
+  else if(s.cred==='token')creds=`<div class="fld"><label>Token de acesso</label><input id="sc-user" placeholder="xoxb-..." value="${c.user||''}"></div>`;
+  const prov=`<div class="fld"><label>Serviço</label><select id="sc-prov">${s.providers.map(p=>`<option ${c.provider===p?'selected':''}>${p}</option>`).join('')}</select></div>`;
+  const search=`<div class="fld"><label>O que buscar</label><input id="sc-kw" value="${c.keywords||'nome da empresa, dores, sinais de compra'}"></div>
+    <div class="fld"><label>Período</label><select id="sc-per">${['Últimos 30 dias','Últimos 90 dias','Últimos 180 dias'].map(p=>`<option ${c.period===p?'selected':''}>${p}</option>`).join('')}</select></div>
+    <div class="fld"><label>Sugestão de busca</label><div class="hint">${s.hint}</div></div>`;
+  document.getElementById('scTitle').textContent='Conectar — '+s.nm;
+  document.getElementById('scBody').innerHTML=prov+creds+search;
+  document.getElementById('scConnect').textContent=s.on?'Salvar configuração':'Conectar';
+  document.getElementById('scDisc').style.display=(s.on&&!s.core)?'block':'none';
+  currentSrc=id;document.getElementById('srcDlg').showModal();}
+function connectSrc(){const id=currentSrc,s=srcState(id),val=i=>{const e=document.getElementById(i);return e?e.value.trim():'';};
+  SRCCFG[id]={provider:val('sc-prov'),user:val('sc-user'),keywords:val('sc-kw'),period:val('sc-per'),connected:true};
+  s.on=true;save('salesai_srccfg',SRCCFG);initSources();document.getElementById('srcDlg').close();if(CURRENT)generate();}
+function disconnectSrc(){const id=currentSrc,s=srcState(id);s.on=false;delete SRCCFG[id];save('salesai_srccfg',SRCCFG);initSources();document.getElementById('srcDlg').close();}
+
+// ---------- 5 prospects do VAREJO ----------
+const DB={
+  nordeste:{co:'Nordeste Varejo S.A.',meta:'Varejo multicategoria · 120 lojas + e-commerce · 3.400 func. · Recife/PE',setor:'Varejo multicategoria · grande porte',
+    techstack:'ERP legado (Totvs) + e-commerce VTEX; CRM em planilhas',contato:'Ana Prado — Diretora de Operações',funil:'Qualificação · última interação há 12 dias',base:58,
+    crm:{perfil:['Rede regional com 120 lojas e e-commerce próprio.','Ticket potencial estimado: R$ 180k/ano.','2 conversas anteriores (2024) sem fechamento por falta de ROI claro.'],
+      dores:['Ruptura de estoque entre lojas e online.','Equipe de loja sem visão única do cliente.'],oport:'Renovação de contrato de tecnologia vence em 45 dias.'},
+    signals:[{src:'email',ic:'✉️',t:'Ana pediu "casos de ROI em varejo regional". Tom morno, mas aberto.'},
+      {src:'teams',ic:'💬',t:'Menção interna: "Nordeste travou por causa da integração com o ERP legado".'},
+      {src:'slack',ic:'#️⃣',t:'#deals: colega marcou reunião com o CIO deles p/ semana que vem.'},
+      {src:'reunioes',ic:'🎙️',t:'Transcrição: na última call citaram "perder venda por não achar o produto no estoque".'},
+      {src:'news',ic:'📰',t:'Notícia (3 dias): Nordeste anuncia expansão de 15 lojas no interior em 2026.'},
+      {src:'wpp',ic:'📱',t:'Contato pediu urgência em "resolver a ruptura antes do Natal".'}],
+    extraDores:['Integração com ERP legado é o bloqueio real (não o preço).','Pressão de tempo pela expansão de 15 lojas.']},
+  modaviva:{co:'ModaViva Franquias',meta:'Moda / vestuário · 80 franquias · 1.100 func. · São Paulo/SP',setor:'Moda / franquias · médio porte',
+    techstack:'Sistema de franquia próprio + Bling; sem CRM unificado',contato:'Rafael Nunes — Diretor de Expansão',funil:'Descoberta · primeira reunião agendada',base:49,
+    crm:{perfil:['Rede de franquias de moda em crescimento acelerado.','Sem histórico de proposta — conta nova.','Ticket potencial: R$ 120k/ano.'],
+      dores:['Falta de padronização de estoque entre franquias.','Baixa visibilidade do que vende em cada praça.'],oport:'Conta nova — janela de descoberta aberta.'},
+    signals:[{src:'email',ic:'✉️',t:'Rafael pediu "algo prático, franqueado não usa sistema complicado".'},
+      {src:'news',ic:'📰',t:'Notícia (1 semana): ModaViva vai abrir 25 franquias e lançar app de fidelidade.'},
+      {src:'slack',ic:'#️⃣',t:'#leads: SDR marcou como "quente" após o anúncio das 25 franquias.'},
+      {src:'teams',ic:'💬',t:'Sem menções internas relevantes.'},{src:'wpp',ic:'📱',t:'Sem interações registradas.'}],
+    extraDores:['Precisa de solução simples para o franqueado adotar.','Escalar 25 franquias sem perder controle de estoque.']},
+  superfrescos:{co:'SuperFrescos Supermercados',meta:'Supermercados · 45 lojas · 2.600 func. · Curitiba/PR',setor:'Supermercados · médio/grande porte',
+    techstack:'ERP SAP + PDV próprio; BI limitado',contato:'Cláudia Reis — Gerente de Compras',funil:'Proposta enviada · aguardando retorno',base:63,
+    crm:{perfil:['Rede regional de supermercados com forte fluxo de perecíveis.','Proposta enviada há 9 dias — sem resposta.','Ticket potencial: R$ 240k/ano.'],
+      dores:['Perdas altas com perecíveis por previsão de demanda ruim.','Rupturas em itens de alto giro nos fins de semana.'],oport:'Proposta em aberto — risco de esfriar.'},
+    signals:[{src:'email',ic:'✉️',t:'Sem resposta à proposta. Última abertura do e-mail: ontem (sinal de compra).'},
+      {src:'teams',ic:'💬',t:'Menção: "SuperFrescos preocupada com perdas de hortifruti".'},
+      {src:'reunioes',ic:'🎙️',t:'Transcrição: diretor disse "perda de perecível está comendo a margem".'},
+      {src:'news',ic:'📰',t:'Notícia (5 dias): SuperFrescos recebe aporte para abrir 10 lojas e um CD.'},
+      {src:'slack',ic:'#️⃣',t:'#success: cliente similar elogiou nosso módulo de previsão de demanda.'},
+      {src:'wpp',ic:'📱',t:'Assistente da Cláudia pediu "material sobre redução de perdas".'}],
+    extraDores:['Redução de perdas de perecíveis é o critério decisivo.','Aporte para 10 lojas + CD = pressão por escalar já.']},
+  techhouse:{co:'TechHouse Eletro',meta:'Eletrônicos · 30 lojas + e-commerce forte · 900 func. · Campinas/SP',setor:'Eletrônicos · médio porte',
+    techstack:'Magento + ERP próprio; CRM Salesforce subutilizado',contato:'Bruno Tavares — Head de E-commerce',funil:'Qualificação · reunião de follow-up',base:55,
+    crm:{perfil:['Varejo de eletrônicos com e-commerce = 40% da receita.','1 proposta anterior — parada por integração.','Ticket potencial: R$ 160k/ano.'],
+      dores:['Estoque de loja e online desencontrados (vende o que não tem).','Carrinho abandonado sem ação de recuperação.'],oport:'Black Friday em 4 meses — janela crítica.'},
+    signals:[{src:'email',ic:'✉️',t:'Bruno pediu demo focada em "omnichannel de estoque real".'},
+      {src:'news',ic:'📰',t:'Notícia (6 dias): TechHouse mira dobrar vendas online na próxima Black Friday.'},
+      {src:'teams',ic:'💬',t:'Menção: "precisamos resolver o estoque unificado antes da BF".'},
+      {src:'slack',ic:'#️⃣',t:'#deals: conta reaquecida após anúncio da meta de Black Friday.'},{src:'wpp',ic:'📱',t:'Sem interações registradas.'}],
+    extraDores:['Estoque unificado é pré-requisito para a Black Friday.','Recuperar carrinho abandonado = receita rápida.']},
+  belacasa:{co:'BelaCasa Home & Decor',meta:'Casa e decoração · 25 lojas · omnichannel · 600 func. · Belo Horizonte/MG',setor:'Casa e decoração · médio porte',
+    techstack:'Shopify + ERP Omie; começando CRM',contato:'Marina Alves — Diretora Comercial',funil:'Descoberta · indicação de cliente atual',base:52,
+    crm:{perfil:['Rede de casa e decoração com forte apelo de experiência na loja.','Chegou por indicação — alta confiança inicial.','Ticket potencial: R$ 110k/ano.'],
+      dores:['Experiência de compra desconectada entre loja e site.','Vendedores sem informação do histórico do cliente.'],oport:'Indicação quente — momento ideal de abordagem.'},
+    signals:[{src:'email',ic:'✉️',t:'Marina respondeu rápido e citou "quero replicar o resultado da empresa que indicou".'},
+      {src:'slack',ic:'#️⃣',t:'#success: a indicação veio de um cliente nosso satisfeito.'},
+      {src:'news',ic:'📰',t:'Notícia (2 semanas): BelaCasa lança programa de fidelidade e reforma 8 lojas.'},
+      {src:'teams',ic:'💬',t:'Sem menções internas relevantes.'},{src:'wpp',ic:'📱',t:'Marina confirmou interesse por mensagem.'}],
+    extraDores:['Quer replicar o sucesso do cliente que indicou.','Unir experiência de loja e site com dados do cliente.']}
+};
+const ORDER=['nordeste','modaviva','superfrescos','techhouse','belacasa'];
+
+// ---------- geradores config-aware ----------
+function genWhy(d){return 'A dor "'+d.crm.dores[0]+'" conecta diretamente com '+COMPANY.oferta+'. Lidere pelo diferencial: '+(COMPANY.dif[0]||'sua principal vantagem')+'.';}
+function genQuestions(d){return ['Como voces lidam hoje com '+d.crm.dores[0].toLowerCase()+'? Quanto isso custa por mes?','O que ja tentaram para resolver e por que nao funcionou?','Quem sente mais essa dor: loja, e-commerce ou compras?','Qual seria o resultado ideal nos proximos 90 dias?'];}
+function genValueArgs(d){return [(COMPANY.ben[0]||'Ganho mensuravel')+' — endereca diretamente "'+d.crm.dores[0]+'".','Roda junto com o que voces ja usam ('+d.techstack+'), sem troca.',(COMPANY.dif[0]||'Nosso diferencial')+'.'];}
+function genJTBD(d){return {
+  func:'Preparar a reunião com o '+d.co+' em menos de 5 min, com contexto completo e sem pesquisa manual.',
+  emo:'Chegar confiante e no controle da conversa, em vez de inseguro e despreparado.',
+  soc:'Ser percebido como um consultor que entende o negócio do cliente — não um vendedor genérico.'};}
+function genApproach(d,news){return [news?'Abra citando o momento: "'+news.t+'".':'Abra reconhecendo o momento atual do '+d.co+'.','Faca a pergunta de diagnostico sobre a dor principal.','Faca a ponte para '+COMPANY.oferta+', destacando "'+(COMPANY.dif[0]||'seu diferencial')+'".','Prove valor com resultado concreto: '+(COMPANY.ben[0]||'ganho mensuravel')+'.'];}
+function genNext(d){return ['Enviar 1 caso de sucesso de '+COMPANY.ramo.toLowerCase()+' parecido com o '+d.co+'.','Propor um piloto de 30 dias de '+COMPANY.oferta+'.','Agendar a proxima conversa com o decisor (incluir TI se houver integracao).'];}
+
+function gauge(pct){const R=62,cx=80,cy=76,sw=14;const a=Math.PI*(1-pct/100);const x=(cx+R*Math.cos(a)).toFixed(1),y=(cy-R*Math.sin(a)).toFixed(1);
+  const col=pct>75?'#1E7A46':pct>55?'#C9A227':'#b3382a';
+  return `<svg width="160" height="90" viewBox="0 0 160 90"><path d="M18 76 A62 62 0 0 1 142 76" fill="none" stroke="#e5ebf2" stroke-width="${sw}" stroke-linecap="round"/><path d="M18 76 A62 62 0 0 1 ${x} ${y}" fill="none" stroke="${col}" stroke-width="${sw}" stroke-linecap="round"/><text x="80" y="70" text-anchor="middle" font-size="26" font-weight="800" fill="${col}">${pct}%</text></svg>`;}
+
+function buildReport(){const k=document.getElementById('client').value,d=DB[k];const srcs=selectedSources();const has=s=>srcs.includes(s);
+  const extra=srcs.filter(s=>s!=='crm');let score=d.base+extra.length*6;
+  const won=LEARN.filter(x=>x.client===k&&x.res==='Ganhou').length,lost=LEARN.filter(x=>x.client===k&&x.res==='Perdeu').length;
+  score+=won*3-lost*3; if(score>96)score=96; if(score<5)score=5;
+  const conf=srcs.length<=1?'Baixa':(extra.length>=3?'Alta':'Média');
+  const dores=[...d.crm.dores];if(extra.length)(d.extraDores||[]).forEach(x=>dores.push(x));
+  const signals=d.signals.filter(s=>has(s.src));const news=d.signals.find(s=>s.src==='news'&&has('news'));
+  return {k,d,srcs,score,conf,dores,signals,news,enriched:extra.length>0};}
+function render(r){const d=r.d;
+  const chips=r.srcs.map(id=>{const s=SOURCES.find(x=>x.id===id);return `<span class="chip">${s.ic} ${s.nm}</span>`}).join('');
+  const note=r.enriched?`<div class="notebox">✨ Relatório <b>enriquecido</b> com ${r.srcs.length} fontes. Confiança: <b>${r.conf}</b>. A propensão sobe com sinais que o CRM sozinho não vê.</div>`
+    :`<div class="notebox">📌 Relatório <b>somente com o CRM</b>. Conecte e ative outras fontes para elevar a propensão e revelar dores ocultas.</div>`;
+  const sig=r.signals.length?r.signals.map(s=>`<div class="sig"><span class="s-ic">${s.ic}</span><span><span class="s-src">${SOURCES.find(x=>x.id===s.src).nm}</span><br>${s.t}</span></div>`).join(''):'<div style="color:#8a94a3;font-size:13px">Nenhuma fonte externa selecionada.</div>';
+  const mp=Math.min(96,r.score+8);
+  const jt=genJTBD(d);
+  const de=jiraEstimate(r.k);
+  const ex=CLIENT_EXTRA[r.k]||{ops:[],follow:[]};
+  const lh=LEARN.filter(x=>x.client===r.k);
+  const learnMsg=LEARN.length?('Aprendizado: '+LEARN.length+' reunião(ões) registrada(s)'+(lh.length?(' · '+lh.length+' desta conta (última: '+lh[lh.length-1].res+')'):'')+'. O modelo usa esse histórico para calibrar a propensão.'):'Nenhuma reunião registrada ainda — use “Registrar resultado” após a reunião para o modelo aprender.';
+  document.getElementById('main').innerHTML=`<div class="rep">
+    <div class="rhead"><div><div class="co">${d.co}</div><div class="meta">${d.meta}<br>${d.contato} · ${d.funil}</div></div></div>
+    <div class="chips">${chips}</div>${note}
+    <div class="valuestrip">✔ <b>Tudo num lugar só:</b> oportunidades abertas, tratativas por canal (e-mail/Teams/Slack/WhatsApp), follow-ups, abordagem recomendada e estimativa de esforço — sem consultar fonte por fonte.</div>
+    <div class="predcard">
+      <div class="pg">${gauge(r.score)}<small>Propensão ao fechamento — simulação preditiva (Oracle ML)</small></div>
+      <div class="sem"><h3>🔎 Recomendação por busca semântica <span class="itag">Solution Intelligence</span></h3>
+        <div class="flow"><span class="n dor">Dor: ${d.crm.dores[0]}</span><span class="ar">→</span><span class="n vec">Vector Search</span><span class="ar">→</span><span class="n prod">${COMPANY.oferta}</span><span class="matchpct">match ${mp}%</span></div>
+        <p style="font-size:12px;color:#5A6472;margin:10px 0 0">${genWhy(d)}</p></div></div>
+    <div class="grid">
+      <div class="card"><h3>🏢 Perfil do cliente 360° <span class="itag">Customer Intelligence</span></h3>
+        <div class="kv"><b>Setor & tamanho:</b> ${d.setor}</div>
+        <div class="kv"><b>Tech stack atual:</b> ${d.techstack}</div>
+        <ul class="clean">${d.crm.perfil.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="card"><h3>🎯 Dores reais <span class="itag">Diagnostic Intelligence</span></h3><ul class="clean">${r.dores.map(x=>`<li>${x}</li>`).join('')}</ul>
+        <div class="kv" style="margin-top:8px"><b>Oportunidade:</b> ${d.crm.oport}</div></div>
+      <div class="card"><h3>💼 Oportunidades abertas</h3><ul class="clean">${(ex.ops||[]).map(x=>`<li>${x}</li>`).join('')||'<li>—</li>'}</ul></div>
+      <div class="card"><h3>⏰ Follow-ups pendentes</h3><ul class="clean">${(ex.follow||[]).map(x=>`<li>${x}</li>`).join('')||'<li>—</li>'}</ul></div>
+      <div class="card full"><h3>📡 Briefing 360° — sinais por fonte</h3>${sig}</div>
+      <div class="card"><h3>❓ Perguntas estratégicas (IA)</h3><ul class="clean">${genQuestions(d).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="card"><h3>💬 Argumentos de valor (IA)</h3><ul class="clean">${genValueArgs(d).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+      <div class="card full"><h3>🏗️ Viabilidade de entrega — Delivery Intelligence (via Jira) <span class="itag">Sales ↔ Delivery</span></h3>
+        ${isLocked('jira')?`<div style="font-size:13px;color:var(--grey)">🔒 A estimativa de esforço e viabilidade a partir do histórico de entregas (Jira) está disponível no plano <b>Enterprise</b>. <a href="#" onclick="showUpgrade();return false;" style="color:var(--red);font-weight:700">Saiba mais →</a></div>`
+        :`<div class="dstat"><div class="d"><div class="n">~${de.est}h</div><div class="l">Esforço estimado</div></div><div class="d"><div class="n">${de.compl}</div><div class="l">Complexidade</div></div><div class="d"><div class="n">${de.meses} m</div><div class="l">Prazo estimado</div></div><div class="d"><div class="n">${de.conf}%</div><div class="l">Confiança</div></div></div>
+        <div style="font-size:12px;color:var(--grey)">Estimado a partir de <b>${de.nSim}</b> projetos entregues similares no Jira (segmento + porte). Apoia a proposta comercial sem depender do time técnico. <a href="#" onclick="openJira();return false;" style="color:var(--red);font-weight:700">Ver detalhes e criar tarefas →</a></div>`}</div>
+      <div class="card full"><h3>🧭 Jobs to be Done — o progresso que o vendedor busca</h3>
+        <div class="jtbd">
+          <div class="j"><div class="t">Funcional</div><div class="d">${jt.func}</div></div>
+          <div class="j"><div class="t">Emocional</div><div class="d">${jt.emo}</div></div>
+          <div class="j"><div class="t">Social</div><div class="d">${jt.soc}</div></div>
+        </div></div>
+      <div class="card full"><h3>✅ Próximos passos sugeridos</h3><ul class="clean">${genNext(d).map(x=>`<li>${x}</li>`).join('')}</ul></div>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="n">+25%</div><div class="l">Taxa de conversão</div></div>
+      <div class="kpi"><div class="n">+40%</div><div class="l">Qualidade de dados</div></div>
+      <div class="kpi"><div class="n">+15%</div><div class="l">Previsibilidade</div></div>
+      <div class="kpi"><div class="n">-70%</div><div class="l">Tempo de pesquisa</div></div>
+    </div>
+    <div class="gov"><span>🔒 <b>Governança:</b> ${AUDIT} consulta(s) na trilha de auditoria</span><span>· Dados conforme <b>LGPD</b> (consentimento por fonte)</span><span>· Acesso por perfil (<b>RBAC</b>) · reversível e rastreável</span></div>
+    <div class="learnnote">🔁 <b>Construir–Medir–Aprender:</b> ${learnMsg}</div>
+    <div class="actions">
+      <button class="btn primary" onclick="exportPitchPDF()">📄 Exportar PDF (Pitch de venda)</button>
+      <button class="btn ghost" onclick="exportPPTX()">⬇️ Exportar PowerPoint</button>
+      <button class="btn ghost" onclick="openOutcome()">📝 Registrar resultado da reunião</button>
+      <button class="btn ghost" onclick="openJira()">🧩 Estimar viabilidade do projeto</button>
+      <button class="btn ghost" onclick="openConns()">Sugerir conexões</button>
+    </div></div>`;}
+function generate(){CURRENT=buildReport();AUDIT++;save('salesai_audit',AUDIT);render(CURRENT);window.scrollTo({top:0,behavior:'smooth'});}
+function renderHome(){CURRENT=null;
+  const acc=ORDER.map(k=>({k,co:DB[k].co,...CLIENT_EXTRA[k].alert})).sort((a,b)=>((a.urg==='alta'?0:1)-(b.urg==='alta'?0:1)));
+  document.getElementById('main').innerHTML=`<div class="rep">
+    <div class="rhead"><div><div class="co">Contas que precisam de atenção</div><div class="meta">O SalesAI monitora sua carteira e te diz onde agir primeiro — e por quê. Clique para abrir o briefing completo.</div></div></div>
+    ${acc.map(a=>`<div class="attn ${a.urg==='alta'?'hi':''}"><div><span class="au">${a.urg==='alta'?'🔴 Alta':'🟡 Média'}</span> · <b>${a.co}</b><div class="ar">${a.txt}</div></div><button class="btn primary" style="width:auto;padding:9px 16px" onclick="openClient('${a.k}')">Abrir</button></div>`).join('')}
+    <div style="margin-top:12px;font-size:12.5px;color:var(--grey)">Ou selecione a conta ao lado e clique em <b>Gerar relatório</b>.</div>
+  </div>`;}
+function openClient(k){document.getElementById('client').value=k;setScope('all');generate();}
+function openAbout(){document.getElementById('aboutDlg').showModal();}
+function openOutcome(){if(!CURRENT){alert('Gere um relatório primeiro.');return;}document.getElementById('outcomeDlg').showModal();}
+function saveOutcome(){const v=id=>document.getElementById(id).value.trim();
+  const nx=v('oc-next');
+  LEARN.push({client:CURRENT.k,co:CURRENT.d.co,res:v('oc-res'),next:nx,why:v('oc-why'),date:new Date().toISOString().slice(0,10)});
+  save('salesai_learn',LEARN);
+  const hrs=parseInt((v('oc-hrs')||'').replace(/\D/g,''),10);
+  if(v('oc-res')==='Ganhou'&&hrs>0){DELIVERY.push({client:CURRENT.k,co:CURRENT.d.co,horas:hrs});save('salesai_delivery',DELIVERY);}
+  if(JIRA.connected&&nx){JIRAISSUES.push({client:CURRENT.k,co:CURRENT.d.co,key:nextJiraKey(),summary:'[Follow-up] '+nx,status:'To Do'});save('salesai_jira_issues',JIRAISSUES);}
+  document.getElementById('outcomeDlg').close();['oc-next','oc-why','oc-hrs'].forEach(i=>document.getElementById(i).value='');
+  generate();}
+
+// ---------- Sales ↔ Delivery: aprende com entregas passadas (Jira) ----------
+// Histórico simulado de projetos JÁ ENTREGUES (lido do Jira), com horas reais.
+const JIRA_HISTORY=[
+  {key:'DEL-260',cliente:'HiperNorte',seg:'Varejo multicategoria',lojas:150,escopo:'Analytics + integração ERP',horas:820},
+  {key:'DEL-210',cliente:'RedeSul Atacado',seg:'Varejo multicategoria',lojas:90,escopo:'Omnichannel + conector ERP',horas:640},
+  {key:'DEL-198',cliente:'ModaMais',seg:'Moda / franquias',lojas:70,escopo:'Estoque entre franquias',horas:410},
+  {key:'DEL-176',cliente:'MercadoBom',seg:'Supermercados',lojas:38,escopo:'Previsão de demanda + PDV',horas:520},
+  {key:'DEL-233',cliente:'EletroTop',seg:'Eletrônicos',lojas:28,escopo:'Estoque unificado + e-commerce',horas:470},
+  {key:'DEL-155',cliente:'CasaBela',seg:'Casa e decoração',lojas:22,escopo:'Omnichannel + fidelidade',horas:300},
+];
+function clientProfile(k){return {nordeste:{seg:'Varejo multicategoria',lojas:120},modaviva:{seg:'Moda / franquias',lojas:80},superfrescos:{seg:'Supermercados',lojas:45},techhouse:{seg:'Eletrônicos',lojas:30},belacasa:{seg:'Casa e decoração',lojas:25}}[k];}
+function jiraMatches(k){const cp=clientProfile(k);
+  return JIRA_HISTORY.map(pj=>{const same=pj.seg===cp.seg;
+    const close=1-Math.min(1,Math.abs(pj.lojas-cp.lojas)/Math.max(pj.lojas,cp.lojas));
+    let m=(same?68:38)+Math.round(close*(same?28:22));if(m>97)m=97;
+    const scaled=Math.round(pj.horas*(cp.lojas/pj.lojas)/10)*10;
+    return {...pj,match:m,scaled};}).sort((a,b)=>b.match-a.match);}
+function jiraEstimate(k){const all=jiraMatches(k);const ms=all.slice(0,3);const w=ms.reduce((s,x)=>s+x.match,0);
+  const est=Math.round(ms.reduce((s,x)=>s+x.scaled*x.match,0)/w/10)*10;
+  const nSim=all.filter(x=>x.match>=50).length;
+  const team=Math.max(3,Math.min(8,Math.round(est/350)));
+  const meses=Math.max(2,Math.round(est/(team*150)*10)/10);
+  const compl=est>1200?'Alta':(est>600?'Média':'Baixa');
+  const nAct=DELIVERY.length;
+  const conf=Math.max(62,Math.min(93,66+nSim*4+Math.round((ms[0].match-70)/3)+nAct*2));
+  return {est,lo:Math.round(est*0.85/10)*10,hi:Math.round(est*1.15/10)*10,ms,nSim,team,meses,compl,conf,fit:ms[0].match,nAct};}
+function nextJiraKey(){return (JIRA.project||'SALES')+'-'+(100+JIRAISSUES.length+1);}
+function openJira(){if(!CURRENT){alert('Gere um relatório primeiro.');return;}
+  const b=document.getElementById('jiraBody');
+  if(!JIRA.connected){JIRA.connected=true;JIRA.project=JIRA.project||'DEL';save('salesai_jira',JIRA);}
+  if(false){
+    b.innerHTML=`<div class="fld"><label>URL do Jira</label><input id="ji-url" placeholder="https://suaempresa.atlassian.net" value="${JIRA.url||''}"></div>
+      <div class="fld"><label>E-mail</label><input id="ji-mail" placeholder="voce@empresa.com" value="${JIRA.email||''}"></div>
+      <div class="fld"><label>API token</label><input id="ji-tok" type="password" placeholder="cole o token"></div>
+      <div class="fld"><label>Projeto de entregas (key)</label><input id="ji-proj" value="${JIRA.project||'DEL'}"></div>
+      <div class="simnote">🔒 Leitura simulada (protótipo). Em produção, leria o histórico via REST API do Jira / connector Atlassian.</div>
+      <button class="btn primary" onclick="connectJira()">Conectar ao Jira</button>`;
+  } else {
+    const d=CURRENT.d,est=jiraEstimate(CURRENT.k),cp=clientProfile(CURRENT.k),mine=JIRAISSUES.filter(x=>x.client===CURRENT.k);
+    b.innerHTML=`<div class="posq">“O SalesAI não apenas recomenda o que vender — ele aprende com o que a empresa já entregou para estimar a viabilidade do que está prestes a vender.”</div>
+      <p style="font-size:11.5px;color:var(--grey);margin:0 0 4px">Lendo entregas do Jira (projeto <b>${JIRA.project}</b>) e buscando similares por segmento + porte.</p>
+      <b style="font-size:13px">📊 Estimativa de entrega para o ${d.co}</b>
+      <div class="est">~${est.est} h <small>(faixa ${est.lo}–${est.hi} h · ${cp.lojas} lojas)</small></div>
+      <div class="dstat"><div class="d"><div class="n">${est.compl}</div><div class="l">Complexidade</div></div><div class="d"><div class="n">${est.meses} m</div><div class="l">Prazo</div></div><div class="d"><div class="n">${est.team}</div><div class="l">Equipe</div></div><div class="d"><div class="n">${est.conf}%</div><div class="l">Confiança</div></div></div>
+      <div style="font-size:11.5px;color:var(--grey);margin-bottom:2px">Fit da solução <b>${est.fit}%</b> · Probabilidade de fechamento <b>${CURRENT.score}%</b> · <b>${est.nSim}</b> projetos similares${est.nAct?(' · calibrado com '+est.nAct+' entrega(s) real(is)'):''}</div>
+      <div style="font-size:11.5px;color:var(--grey);margin-bottom:6px">Projetos entregues mais parecidos:</div>
+      ${est.ms.map(x=>`<div class="jira-issue"><span class="jk">${x.key}</span><span>${x.cliente} · ${x.seg} · ${x.lojas} lojas — ${x.horas}h reais</span><span class="jst">match ${x.match}%</span></div>`).join('')}
+      <div style="font-size:11px;color:var(--grey);margin:8px 0 0">A estimativa escala as horas reais pelo porte do ${d.co} e pondera pela similaridade — apoiando a proposta e a viabilidade.</div>
+      <hr style="border:0;border-top:1px solid #eef2f6;margin:12px 0">
+      <b style="font-size:12.5px">Próximos passos → tarefas no Jira</b><br>
+      <button class="btn primary" style="margin-top:6px" onclick="createJiraTasks()">Criar ${genNext(d).length} tarefas</button>
+      ${mine.length?('<div style="margin-top:10px">'+mine.map(x=>`<div class="jira-issue"><span class="jk">${x.key}</span><span>${x.summary}</span><span class="jst">${x.status}</span></div>`).join('')+'</div>'):''}`;
+  }
+  document.getElementById('jiraDlg').showModal();}
+function connectJira(){const v=id=>{const e=document.getElementById(id);return e?e.value.trim():'';};
+  JIRA={connected:true,url:v('ji-url')||'suaempresa.atlassian.net',email:v('ji-mail'),project:(v('ji-proj')||'DEL').toUpperCase()};
+  save('salesai_jira',JIRA);initSources();openJira();}
+function disconnectJira(){JIRA={connected:false,url:'',email:'',project:'DEL'};save('salesai_jira',JIRA);initSources();openJira();}
+function createJiraTasks(){const d=CURRENT.d;genNext(d).forEach(s=>{JIRAISSUES.push({client:CURRENT.k,co:d.co,key:nextJiraKey(),summary:s,status:'To Do'});});
+  save('salesai_jira_issues',JIRAISSUES);openJira();}
+
+function openConns(){const list=document.getElementById('connList');list.innerHTML='';
+  const off=SOURCES.filter(s=>!srcOn(s));const extra=[{ic:'🔗',nm:'LinkedIn Sales Navigator',ds:'Movimentações dos decisores'},{ic:'📊',nm:'Serasa / dados cadastrais',ds:'Saúde financeira e porte'},{ic:'🛒',nm:'Dados de PDV / e-commerce',ds:'Giro e sortimento por loja'}];
+  [...off.map(s=>({ic:s.ic,nm:s.nm,ds:'Fonte disponível — clique para conectar'})),...extra].forEach(i=>{list.innerHTML+=`<div class="conn"><span class="ic">${i.ic}</span><span class="g"><div class="nm">${i.nm}</div><div class="ds">${i.ds}</div></span><button class="add" onclick="this.textContent='Solicitado ✓';this.disabled=true">Conectar</button></div>`;});
+  document.getElementById('connDlg').showModal();}
+
+// ---------- PowerPoint ----------
+function exportPPTX(){if(!CURRENT){alert('Gere um relatório primeiro.');return;}if(typeof PptxGenJS==='undefined'){alert('Abra com internet para gerar o PowerPoint.');return;}
+  const r=CURRENT,d=r.d,P=new PptxGenJS();P.defineLayout({name:'W',width:10,height:5.63});P.layout='W';const NAVY='12233A',RED='E4572E',GREY='5A6472';
+  let s=P.addSlide();s.background={color:NAVY};
+  s.addText('Briefing de Cliente — '+COMPANY.nome,{x:0.5,y:1.1,w:9,fontSize:22,bold:true,color:'FFFFFF'});
+  s.addText(d.co,{x:0.5,y:2.1,w:9,fontSize:22,color:'F26A4B',bold:true});
+  s.addText(d.meta+'  |  '+d.contato,{x:0.5,y:2.9,w:9,fontSize:12,color:'C9D7E6'});
+  s.addText('Propensao ao fechamento: '+r.score+'% (Oracle ML) · Fontes: '+r.srcs.length+' · Confianca: '+r.conf,{x:0.5,y:3.5,w:9,fontSize:12,color:'FFFFFF'});
+  s.addText('Solucao: '+COMPANY.oferta,{x:0.5,y:4.0,w:9,fontSize:11,color:'C9D7E6'});
+  s=P.addSlide();s.addText('Perfil 360 & Dores',{x:0.4,y:0.3,fontSize:20,bold:true,color:NAVY});
+  s.addText([{text:'Setor & tamanho: '+d.setor,options:{bullet:true,fontSize:12}},{text:'Tech stack atual: '+d.techstack,options:{bullet:true,fontSize:12}}].concat(d.crm.perfil.map(t=>({text:t,options:{bullet:true,fontSize:12}}))),{x:0.4,y:1.0,w:4.6,h:3.6});
+  s.addText('Dores reais',{x:5.2,y:1.0,fontSize:13,bold:true,color:RED});s.addText(r.dores.map(t=>({text:t,options:{bullet:true,fontSize:12}})),{x:5.2,y:1.35,w:4.4,h:3.3});
+  s=P.addSlide();s.addText('Briefing 360 — sinais por fonte',{x:0.4,y:0.3,fontSize:20,bold:true,color:NAVY});
+  r.signals.length?s.addText(r.signals.map(x=>({text:'['+SOURCES.find(y=>y.id===x.src).nm+'] '+x.t,options:{bullet:true,fontSize:12,paraSpaceAfter:6}})),{x:0.4,y:1.0,w:9.2,h:4}):s.addText('Somente CRM selecionado.',{x:0.4,y:1,fontSize:13,color:GREY});
+  s=P.addSlide();s.addText('Sugestoes estrategicas (IA)',{x:0.4,y:0.3,fontSize:20,bold:true,color:NAVY});
+  s.addText('Perguntas estrategicas',{x:0.4,y:1.0,fontSize:13,bold:true,color:RED});s.addText(genQuestions(d).map(t=>({text:t,options:{bullet:true,fontSize:12}})),{x:0.4,y:1.35,w:4.6,h:3.2});
+  s.addText('Argumentos de valor',{x:5.2,y:1.0,fontSize:13,bold:true,color:RED});s.addText(genValueArgs(d).map(t=>({text:t,options:{bullet:true,fontSize:12}})),{x:5.2,y:1.35,w:4.4,h:3.2});
+  s=P.addSlide();s.addText('Recomendacao & Proximos passos',{x:0.4,y:0.3,fontSize:20,bold:true,color:NAVY});
+  s.addText('Solucao recomendada: '+COMPANY.oferta,{x:0.4,y:1.0,w:9.2,fontSize:14,bold:true,color:RED});
+  s.addText(genNext(d).map(t=>({text:t,options:{bullet:true,fontSize:13,paraSpaceAfter:8}})),{x:0.4,y:1.7,w:9.2,h:3});
+  s.addText('Gerado pelo SalesAI Cockpit · '+COMPANY.nome+' · dados ficticios',{x:0.4,y:5.1,w:9.2,fontSize:9,color:GREY});
+  P.writeFile({fileName:'Briefing_'+d.co.replace(/[^a-zA-Z0-9]/g,'_')+'.pptx'});}
+
+// ---------- PDF (Pitch de venda) ----------
+function exportPitchPDF(){if(!CURRENT){alert('Gere um relatório primeiro.');return;}if(typeof jspdf==='undefined'){alert('Abra com internet para gerar o PDF.');return;}
+  const d=CURRENT.d,news=CURRENT.news,score=CURRENT.score,{jsPDF}=jspdf,doc=new jsPDF({unit:'pt',format:'a4'});
+  const W=595,H=842,M=48,CW=W-2*M,NAVY=[18,35,58],RED=[228,87,46],GREY=[90,100,114],DARK=[34,34,34],CORAL=[242,106,75];let y=0;
+  const np=()=>{doc.addPage();y=M;},need=h=>{if(y+h>H-M)np();};
+  const clean=t=>t.normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[—–]/g,'-').replace(/·/g,'|').replace(/[“”]/g,'"').replace(/[‘’]/g,"'").replace(/…/g,'...');
+  function h1(t){need(34);doc.setFont('helvetica','bold');doc.setFontSize(15);doc.setTextColor(...RED);doc.text(clean(t),M,y+6);y+=24;doc.setDrawColor(228,228,228);doc.line(M,y-6,W-M,y-6);y+=4;}
+  function para(t,o){o=o||{};doc.setFont('helvetica',o.bold?'bold':'normal');doc.setFontSize(o.size||10.5);doc.setTextColor(...(o.color||DARK));doc.splitTextToSize(clean(t),CW).forEach(ln=>{need(15);doc.text(ln,M,y);y+=o.lh||14;});}
+  function bul(arr){arr.forEach(t=>{doc.setFont('helvetica','normal');doc.setFontSize(10.5);const l=doc.splitTextToSize(clean(t),CW-16);need(l.length*13+2);doc.setTextColor(...RED);doc.text('-',M,y);doc.setTextColor(...DARK);l.forEach(ln=>{doc.text(ln,M+14,y);y+=13;});y+=3;});}
+  const gap=h=>{y+=h||8;};
+  doc.setFillColor(...NAVY);doc.rect(0,0,W,H,'F');doc.setFillColor(...RED);doc.rect(M,150,60,6,'F');
+  doc.setFont('helvetica','bold');doc.setFontSize(23);doc.setTextColor(255,255,255);doc.text('Pitch de Abordagem',M,198);
+  doc.setFontSize(13);doc.setTextColor(...CORAL);doc.text(clean('Como a '+COMPANY.nome+' deve abordar e nao perder a venda'),M,224);
+  doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(255,255,255);doc.text(clean(d.co),M,292);
+  doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(201,215,230);
+  doc.splitTextToSize(clean(d.meta+'  |  '+d.contato),CW).forEach((ln,i)=>doc.text(ln,M,314+i*16));
+  doc.setFont('helvetica','bold');doc.setFontSize(13);doc.setTextColor(...CORAL);doc.text('Propensao ao fechamento: '+score+'% (Oracle ML)',M,372);
+  doc.setFont('helvetica','normal');doc.setFontSize(10);doc.setTextColor(160,175,195);
+  doc.text(clean('Solucao ofertada: '+COMPANY.oferta),M,H-96);
+  doc.text(clean('Vendedor: '+COMPANY.nome+' ('+COMPANY.ramo+')  ·  SalesAI Cockpit  ·  dados ficticios'),M,H-74);
+  np();
+  h1('1. Contexto do cliente');
+  para('Empresa: '+d.co+' — '+d.meta,{bold:true});gap(1);
+  para('Setor & tamanho: '+d.setor);para('Tech stack atual: '+d.techstack);gap(2);
+  para('Situacao comercial: '+d.funil+'. '+d.crm.oport);gap(4);
+  if(news){para('Sinal relevante: '+news.t,{color:GREY});gap(4);}
+  para('Principais dores identificadas:',{bold:true});bul(d.crm.dores.concat(d.extraDores||[]));
+  h1('2. Quem somos e por que nos');para(COMPANY.quem);gap(4);para('Nossos diferenciais:',{bold:true});bul(COMPANY.dif.length?COMPANY.dif:['(configure em Minha Empresa)']);
+  h1('3. Como abordar (tom e postura)');
+  bul(['Postura consultiva: comece pela dor do cliente, nao pelo produto.','Abra com o gancho do momento (expansao/noticia) — mostra que voce fez o dever de casa.','Fale a lingua do varejo: ruptura, giro, conversao em loja e omnichannel.','Traga o decisor tecnico cedo se o bloqueio for integracao.']);
+  h1('4. Perguntas estrategicas (para fazer na reuniao)');bul(genQuestions(d));
+  h1('5. Argumentos de valor');bul(genValueArgs(d));
+  h1('6. Objecoes provaveis e como responder');
+  para('"Ja temos um ERP/sistema de gestao."',{bold:true});para('Resposta: "Otimo — nossa solucao trabalha junto com ele. '+(COMPANY.dif[0]||'Integramos sem troca')+'."');gap(3);
+  para('"Estamos no meio da alta temporada, sem tempo."',{bold:true});para('Resposta: "Por isso proponho um piloto de 30 dias em poucas lojas, com valor ja na primeira semana e sem parar a operacao."');gap(3);
+  para('"O preco parece alto."',{bold:true});para('Resposta: "Vamos olhar o retorno: '+(COMPANY.ben[0]||'o ganho')+' costuma pagar o investimento em poucos meses."');
+  h1('7. Fechamento (call to action)');
+  para('Proponha um proximo passo concreto e com data:',{bold:true});
+  bul(['Piloto de 30 dias em um grupo pequeno de lojas.','Metrica combinada (ex.: reducao de ruptura ou aumento de conversao).','Agendar ja a proxima conversa com o decisor.']);
+  para('Fala de fechamento: "Topa rodarmos 30 dias em 3 lojas e medir juntos o impacto? Se nao gerar valor, voce nao segue."');
+  h1('8. O que EVITAR (para nao perder a venda)');
+  bul(['Abrir por funcionalidades antes de entender a dor.','Sugerir trocar o ERP/CRM que a rede ja usa.','Ignorar o decisor tecnico quando o bloqueio e integracao.','Falar preco antes de ancorar o valor/ROI.','Encerrar sem um proximo passo agendado.']);
+  doc.save('Pitch_'+d.co.replace(/[^a-zA-Z0-9]/g,'_')+'_'+COMPANY.nome.replace(/[^a-zA-Z0-9]/g,'_')+'.pdf');}
+
+// ---------- Login (demo) + planos ----------
+function doLogin(){const u=document.getElementById('lg-user').value.trim(),p=document.getElementById('lg-pass').value;
+  if(u==='user01'&&p==='12345'){PLAN='enterprise';}
+  else if(u==='user02'&&p==='67890'){PLAN='pro';}
+  else if(u==='user03'&&p==='qwert'){PLAN='free';}
+  else{document.getElementById('lg-err').textContent='Usuário ou senha inválidos.';return;}
+  document.getElementById('login').style.display='none';ctx();initSources();if(CURRENT)generate();else renderHome();}
+function logout(){document.getElementById('lg-user').value='';document.getElementById('lg-pass').value='';document.getElementById('lg-err').textContent='';document.getElementById('login').style.display='flex';}
+function showUpgrade(){document.getElementById('upDlg').showModal();}
+
+// init
+ctx();initClients();initSources();renderHome();
+function initClients(){const sel=document.getElementById('client');ORDER.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=DB[k].co;sel.appendChild(o);});}
+</script>
+</body>
+</html>
