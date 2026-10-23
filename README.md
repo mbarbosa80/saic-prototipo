@@ -4,8 +4,7 @@ Protótipo funcional do **SAIC (SalesAI Cockpit)**, um cockpit de inteligência 
 
 Projeto final do MBA — **FIAP · Desafio IA 2025 — Oracle**.
 
-> **▶ Acesse o protótipo:** https://SEU-USUARIO.github.io/saic-prototipo/
-> *(substitua pelo seu usuário depois de ativar o GitHub Pages)*
+> **Acesse o protótipo:** https://mbarbosa80.github.io/saic-prototipo/ — abre direto no navegador, sem instalar nada.
 
 ---
 
