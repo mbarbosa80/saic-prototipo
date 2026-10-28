@@ -110,6 +110,33 @@
   .itag{font-size:9px;font-weight:700;color:#2f6fdb;background:#eaf1fc;border-radius:10px;padding:2px 7px;margin-left:6px;letter-spacing:0}
   .dstat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:8px 0}
   .dstat .d{background:var(--light);border-radius:8px;padding:8px;text-align:center}.dstat .d .n{font-size:16px;font-weight:800;color:var(--navy)}.dstat .d .l{font-size:9.5px;color:var(--grey);margin-top:1px}
+
+  /* ---- Chat em linguagem natural (Enterprise) ---- */
+  #chatLaunch{position:fixed;right:22px;bottom:22px;z-index:60;display:none;align-items:center;gap:8px;background:linear-gradient(135deg,var(--red),var(--coral));color:#fff;border:0;border-radius:30px;padding:13px 20px;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px #e4572e55}
+  #chatLaunch:hover{filter:brightness(.95)}
+  #chatLaunch.locked{background:#fff;color:var(--grey);border:1px solid #cfd8e3;box-shadow:0 4px 14px #0000001a}
+  #chatPanel{position:fixed;right:22px;bottom:78px;z-index:61;width:430px;max-width:calc(100vw - 30px);height:600px;max-height:calc(100vh - 110px);display:none;flex-direction:column;background:#fff;border:1px solid #d9e1ea;border-radius:16px;box-shadow:0 18px 50px #0000003d;overflow:hidden}
+  #chatPanel .ch-h{background:var(--navy);color:#fff;padding:13px 16px;display:flex;align-items:center;gap:10px}
+  #chatPanel .ch-h .t{font-weight:800;font-size:15px}#chatPanel .ch-h .s{font-size:11px;color:#9fb0c4;margin-top:2px;line-height:1.35}
+  #chatPanel .ch-h .x{margin-left:auto;background:transparent;border:0;color:#cfd8e3;font-size:20px;cursor:pointer;line-height:1}
+  #chatMsgs{flex:1;overflow:auto;padding:14px 14px 6px;background:#f7f9fc}
+  .cm{max-width:92%;margin:0 0 12px;font-size:13px;line-height:1.5}
+  .cm.u{margin-left:auto;background:var(--navy);color:#fff;padding:9px 13px;border-radius:14px 14px 3px 14px}
+  .cm.a .b{background:#fff;border:1px solid #e3e9f0;padding:10px 13px;border-radius:14px 14px 14px 3px;color:var(--navy)}
+  .cm.a .b ul{margin:6px 0 2px;padding-left:18px}.cm.a .b li{margin:3px 0}
+  .cm.a .ev{display:flex;flex-wrap:wrap;gap:5px;margin:6px 2px 0;align-items:center;font-size:10.5px;color:var(--grey)}
+  .cm.a .ev .chip{font-size:10.5px;padding:3px 8px}
+  .cm.a.typing .b{color:var(--grey)}
+  .dots span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#9aa6b4;margin-right:3px;animation:blink 1s infinite}
+  .dots span:nth-child(2){animation-delay:.15s}.dots span:nth-child(3){animation-delay:.3s}
+  @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+  #chatChips{display:flex;flex-wrap:wrap;gap:6px;padding:8px 14px 2px;background:#f7f9fc}
+  #chatChips button{border:1px solid #cfd8e3;background:#fff;color:var(--navy2);border-radius:18px;font-size:11.5px;padding:5px 11px;cursor:pointer;font-weight:600}
+  #chatChips button:hover{background:var(--light)}
+  #chatPanel .ch-f{display:flex;gap:8px;padding:10px 14px;border-top:1px solid #e9eef4;background:#fff}
+  #chatPanel .ch-f input{flex:1;padding:10px 12px;border:1px solid #cfd8e3;border-radius:10px;font-size:13.5px;color:var(--navy)}
+  #chatPanel .ch-f button{background:var(--red);color:#fff;border:0;border-radius:10px;padding:0 16px;font-weight:700;cursor:pointer}
+  #chatPanel .ch-n{font-size:10px;color:#8a94a3;padding:0 14px 9px;background:#fff;line-height:1.4}
 </style>
 </head>
 <body>
@@ -125,7 +152,7 @@
 </div></div>
 <dialog id="upDlg"><div class="dlg">
   <h3>🔒 Recurso de plano superior</h3>
-  <p>Este conector não está disponível no seu plano atual. Freemium: apenas CRM. Pro: CRM, E-mail, Teams e Notícias. Enterprise: todas as fontes, incluindo Slack, WhatsApp, Reuniões e o Jira (Delivery Intelligence). Faça upgrade para desbloquear.</p>
+  <p>Este recurso não está disponível no seu plano atual. Freemium: apenas CRM. Pro: CRM, E-mail, Teams e Notícias. Enterprise: todas as fontes, incluindo Slack, WhatsApp, Reuniões e o Jira (Delivery Intelligence), além do chat em linguagem natural. Faça upgrade para desbloquear.</p>
   <button class="btn primary" onclick="document.getElementById('upDlg').close()">Entendi</button>
 </div></dialog>
 <header>
@@ -156,7 +183,7 @@
     <div style="margin-top:6px;font-size:13px">Compare "Somente CRM" com "Todas as fontes" e veja a propensão ao fechamento subir.</div></div>
   </div>
 </div>
-<div class="foot">SalesAI Cockpit — protótipo de demonstração (FIAP · Grupo #1028). Dados fictícios; integrações simuladas. Arquitetura mapeável para Oracle (Database 23ai Vector Search, OCI GenAI/Speech, OML, APEX, OIC).</div>
+<div class="foot">SalesAI Cockpit — protótipo de demonstração (FIAP · Grupo #1028). Dados fictícios; integrações simuladas; chat com respostas simuladas. Arquitetura mapeável para Oracle (Database 23ai Vector Search, OCI GenAI/Speech, OML, APEX, OIC).</div>
 
 <dialog id="cfgDlg"><div class="dlg">
   <h3>⚙ Minha Empresa</h3><p>Estes dados personalizam o relatório, o pitch e a apresentação — deixando a ferramenta com a cara do seu mercado.</p>
@@ -199,6 +226,7 @@
       <li><b>Job:</b> ele quer preparar a reunião em minutos, com contexto e confiança.</li>
       <li><b>Solução:</b> um cockpit que enriquece o CRM e recomenda a abordagem eleva conversão.</li>
       <li><b>Sales ↔ Delivery:</b> aprender com o que a empresa já entregou (Jira) para estimar a viabilidade/horas aumenta a assertividade da proposta.</li>
+      <li><b>Chat (Enterprise):</b> o vendedor pergunta em linguagem natural e recebe respostas baseadas nos dados da conta, com as fontes consultadas. No protótipo a resposta é simulada por regras; em produção seria gerada por OCI Generative AI com busca vetorial.</li>
     </ul>
     <b>Ciclo:</b> Construir → Medir → Aprender (o botão "Registrar resultado" fecha o loop).
   </div>
@@ -222,7 +250,17 @@
   <button class="btn ghost" style="margin-top:10px" onclick="document.getElementById('jiraDlg').close()">Fechar</button>
 </div></dialog>
 
+<button id="chatLaunch" onclick="chatToggle()" aria-label="Abrir chat em linguagem natural"></button>
+<div id="chatPanel" role="dialog" aria-label="Chat em linguagem natural">
+  <div class="ch-h"><div><div class="t">💬 Pergunte ao SalesAI</div><div class="s" id="chatSub"></div></div><button class="x" onclick="chatClose()" aria-label="Fechar chat">×</button></div>
+  <div id="chatMsgs"></div>
+  <div id="chatChips"></div>
+  <div class="ch-f"><input id="chatIn" placeholder="Pergunte em linguagem natural…" autocomplete="off" onkeydown="if(event.key==='Enter')chatSend()"><button onclick="chatSend()">Enviar</button></div>
+  <div class="ch-n">🔒 Resposta simulada (protótipo): composta por regras a partir dos dados do briefing. Em produção: OCI Generative AI com busca vetorial sobre os dados da conta.</div>
+</div>
+
 <script>
+const _t=s=>String(s==null?'':s).replace(/[\s.!?]+$/,''); // remove pontuação final para evitar "S.A.." e "online.?"
 // ---------- Minha Empresa ----------
 const DEFAULT_COMPANY={nome:'Varejo360 Soluções',ramo:'Varejo',oferta:'Plataforma de gestão omnichannel para o varejo (estoque, PDV e analytics)',
   quem:'Somos uma empresa de tecnologia para o varejo. Ajudamos redes a unificar loja física e digital, reduzir ruptura de estoque e vender mais com dados.',
@@ -266,7 +304,7 @@ const isLocked=id=>!(PLAN_ACCESS[PLAN]||PLAN_ACCESS.free).includes(id);
 function srcState(id){return SOURCES.find(x=>x.id===id);}
 
 function srcOn(s){return s.special==='jira'?JIRA.connected:s.on;}
-function initSources(extra){const prev=new Set(selectedSources());if(extra)prev.add(extra);const box=document.getElementById('srcs');box.innerHTML='';
+function initSources(){const box=document.getElementById('srcs');box.innerHTML='';
   SOURCES.forEach(s=>{const lk=isLocked(s.id);const cfg=SRCCFG[s.id]||{};const on=srcOn(s);
     const act=lk?'showUpgrade()':(s.special==='jira'?'openJira()':`openSrcCfg('${s.id}')`);
     const st=lk?'Indisponível no seu plano':(s.special==='jira'?(on?(JIRA.project||'Delivery Intelligence'):'Delivery Intelligence — histórico de entregas'):((on&&cfg.provider)?cfg.provider:(on?'conectado':s.providers[0])));
@@ -276,8 +314,7 @@ function initSources(extra){const prev=new Set(selectedSources());if(extra)prev.
       <div class="srcinfo" onclick="${act}"><span class="ic">${s.ic}</span><span><span class="nm">${s.nm}</span><br><span class="st">${st}</span></span></div>
       ${badge}`;
     box.appendChild(row);});
-  applyScope();
-  SOURCES.forEach(s=>{const cb=document.querySelector('#src-'+s.id+' input');if(cb&&!cb.disabled&&prev.has(s.id))cb.checked=true;});}
+  applyScope();}
 function setScope(v){scope=v;document.getElementById('tg-crm').classList.toggle('on',v==='crm');document.getElementById('tg-all').classList.toggle('on',v==='all');applyScope();}
 function applyScope(){SOURCES.forEach(s=>{const row=document.getElementById('src-'+s.id);if(!row)return;const cb=row.querySelector('input');const lk=isLocked(s.id);const on=srcOn(s);
   if(s.id==='crm'){cb.checked=true;cb.disabled=true;return;}
@@ -286,7 +323,7 @@ function selectedSources(){return [...document.querySelectorAll('#srcs input:che
 
 // ---- modal de integração por fonte ----
 function openSrcCfg(id){if(isLocked(id)){showUpgrade();return;}const s=srcState(id),c=SRCCFG[id]||{};let creds='';
-  if(s.cred==='oauth')creds=`<div class="fld"><label>Usuário</label><input id="sc-user" placeholder="voce@empresa.com" value="${c.user||''}"></div><div class="fld"><label>Senha</label><input id="sc-pass" type="password" placeholder="••••••••"></div>`;
+  if(s.cred==='oauth')creds=`<div class="fld"><label>Usuário</label><input id="sc-user" placeholder="você@empresa.com" value="${c.user||''}"></div><div class="fld"><label>Senha</label><input id="sc-pass" type="password" placeholder="••••••••"></div>`;
   else if(s.cred==='apikey')creds=`<div class="fld"><label>API Key / Token</label><input id="sc-user" placeholder="cole a chave da API" value="${c.user||''}"></div>`;
   else if(s.cred==='token')creds=`<div class="fld"><label>Token de acesso</label><input id="sc-user" placeholder="xoxb-..." value="${c.user||''}"></div>`;
   const prov=`<div class="fld"><label>Serviço</label><select id="sc-prov">${s.providers.map(p=>`<option ${c.provider===p?'selected':''}>${p}</option>`).join('')}</select></div>`;
@@ -300,7 +337,7 @@ function openSrcCfg(id){if(isLocked(id)){showUpgrade();return;}const s=srcState(
   currentSrc=id;document.getElementById('srcDlg').showModal();}
 function connectSrc(){const id=currentSrc,s=srcState(id),val=i=>{const e=document.getElementById(i);return e?e.value.trim():'';};
   SRCCFG[id]={provider:val('sc-prov'),user:val('sc-user'),keywords:val('sc-kw'),period:val('sc-per'),connected:true};
-  s.on=true;save('salesai_srccfg',SRCCFG);initSources(id);document.getElementById('srcDlg').close();if(CURRENT)generate();}
+  s.on=true;save('salesai_srccfg',SRCCFG);initSources();document.getElementById('srcDlg').close();if(CURRENT)generate();}
 function disconnectSrc(){const id=currentSrc,s=srcState(id);s.on=false;delete SRCCFG[id];save('salesai_srccfg',SRCCFG);initSources();document.getElementById('srcDlg').close();}
 
 // ---------- 5 prospects do VAREJO ----------
@@ -358,15 +395,15 @@ const DB={
 const ORDER=['nordeste','modaviva','superfrescos','techhouse','belacasa'];
 
 // ---------- geradores config-aware ----------
-function genWhy(d){return 'A dor "'+d.crm.dores[0]+'" conecta diretamente com '+COMPANY.oferta+'. Lidere pelo diferencial: '+(COMPANY.dif[0]||'sua principal vantagem')+'.';}
-function genQuestions(d){return ['Como voces lidam hoje com '+d.crm.dores[0].toLowerCase()+'? Quanto isso custa por mes?','O que ja tentaram para resolver e por que nao funcionou?','Quem sente mais essa dor: loja, e-commerce ou compras?','Qual seria o resultado ideal nos proximos 90 dias?'];}
-function genValueArgs(d){return [(COMPANY.ben[0]||'Ganho mensuravel')+' — endereca diretamente "'+d.crm.dores[0]+'".','Roda junto com o que voces ja usam ('+d.techstack+'), sem troca.',(COMPANY.dif[0]||'Nosso diferencial')+'.'];}
+function genWhy(d){return 'A dor "'+_t(d.crm.dores[0])+'" conecta diretamente com '+_t(COMPANY.oferta)+'. Lidere pelo diferencial: '+_t(COMPANY.dif[0]||'sua principal vantagem')+'.';}
+function genQuestions(d){return ['Como vocês lidam hoje com '+_t(d.crm.dores[0]).toLowerCase()+'? Quanto isso custa por mês?','O que já tentaram para resolver e por que não funcionou?','Quem sente mais essa dor: loja, e-commerce ou compras?','Qual seria o resultado ideal nos próximos 90 dias?'];}
+function genValueArgs(d){return [_t(COMPANY.ben[0]||'Ganho mensurável')+' — endereça diretamente "'+_t(d.crm.dores[0])+'".','Roda junto com o que vocês já usam ('+_t(d.techstack)+'), sem troca.',_t(COMPANY.dif[0]||'Nosso diferencial')+'.'];}
 function genJTBD(d){return {
   func:'Preparar a reunião com o '+d.co+' em menos de 5 min, com contexto completo e sem pesquisa manual.',
   emo:'Chegar confiante e no controle da conversa, em vez de inseguro e despreparado.',
   soc:'Ser percebido como um consultor que entende o negócio do cliente — não um vendedor genérico.'};}
-function genApproach(d,news){return [news?'Abra citando o momento: "'+news.t+'".':'Abra reconhecendo o momento atual do '+d.co+'.','Faca a pergunta de diagnostico sobre a dor principal.','Faca a ponte para '+COMPANY.oferta+', destacando "'+(COMPANY.dif[0]||'seu diferencial')+'".','Prove valor com resultado concreto: '+(COMPANY.ben[0]||'ganho mensuravel')+'.'];}
-function genNext(d){return ['Enviar 1 caso de sucesso de '+COMPANY.ramo.toLowerCase()+' parecido com o '+d.co+'.','Propor um piloto de 30 dias de '+COMPANY.oferta+'.','Agendar a proxima conversa com o decisor (incluir TI se houver integracao).'];}
+function genApproach(d,news){return [news?'Abra citando o momento: "'+_t(news.t)+'".':'Abra reconhecendo o momento atual do '+_t(d.co)+'.','Faça a pergunta de diagnóstico sobre a dor principal.','Faça a ponte para '+_t(COMPANY.oferta)+', destacando "'+_t(COMPANY.dif[0]||'seu diferencial')+'".','Prove valor com resultado concreto: '+_t(COMPANY.ben[0]||'ganho mensurável')+'.'];}
+function genNext(d){return ['Enviar 1 caso de sucesso de '+COMPANY.ramo.toLowerCase()+' parecido com o '+_t(d.co)+'.','Propor um piloto de 30 dias de '+_t(COMPANY.oferta)+'.','Agendar a próxima conversa com o decisor (incluir TI se houver integração).'];}
 
 function gauge(pct){const R=62,cx=80,cy=76,sw=14;const a=Math.PI*(1-pct/100);const x=(cx+R*Math.cos(a)).toFixed(1),y=(cy-R*Math.sin(a)).toFixed(1);
   const col=pct>75?'#1E7A46':pct>55?'#C9A227':'#b3382a';
@@ -487,19 +524,16 @@ function jiraEstimate(k){const all=jiraMatches(k);const ms=all.slice(0,3);const 
   const conf=Math.max(62,Math.min(93,66+nSim*4+Math.round((ms[0].match-70)/3)+nAct*2));
   return {est,lo:Math.round(est*0.85/10)*10,hi:Math.round(est*1.15/10)*10,ms,nSim,team,meses,compl,conf,fit:ms[0].match,nAct};}
 function nextJiraKey(){return (JIRA.project||'SALES')+'-'+(100+JIRAISSUES.length+1);}
-function openJira(){if(isLocked('jira')){showUpgrade();return;}
+function openJira(){if(!CURRENT){alert('Gere um relatório primeiro.');return;}
   const b=document.getElementById('jiraBody');
-  if(!JIRA.connected){
+  if(!JIRA.connected){JIRA.connected=true;JIRA.project=JIRA.project||'DEL';save('salesai_jira',JIRA);}
+  if(false){
     b.innerHTML=`<div class="fld"><label>URL do Jira</label><input id="ji-url" placeholder="https://suaempresa.atlassian.net" value="${JIRA.url||''}"></div>
-      <div class="fld"><label>E-mail</label><input id="ji-mail" placeholder="voce@empresa.com" value="${JIRA.email||''}"></div>
+      <div class="fld"><label>E-mail</label><input id="ji-mail" placeholder="você@empresa.com" value="${JIRA.email||''}"></div>
       <div class="fld"><label>API token</label><input id="ji-tok" type="password" placeholder="cole o token"></div>
       <div class="fld"><label>Projeto de entregas (key)</label><input id="ji-proj" value="${JIRA.project||'DEL'}"></div>
       <div class="simnote">🔒 Leitura simulada (protótipo). Em produção, leria o histórico via REST API do Jira / connector Atlassian.</div>
       <button class="btn primary" onclick="connectJira()">Conectar ao Jira</button>`;
-  } else if(!CURRENT){
-    b.innerHTML=`<div class="posq">✅ Jira conectado — projeto <b>${JIRA.project}</b> (${JIRA.url||'suaempresa.atlassian.net'}).</div>
-      <p style="font-size:12.5px;color:var(--grey);margin:6px 0">A fonte <b>Jira (Delivery)</b> já está marcada na lista. Escolha um cliente e gere o relatório para ver a estimativa de horas, prazo e viabilidade com base nas entregas anteriores.</p>
-      <button class="btn ghost" onclick="disconnectJira()">Desconectar Jira</button>`;
   } else {
     const d=CURRENT.d,est=jiraEstimate(CURRENT.k),cp=clientProfile(CURRENT.k),mine=JIRAISSUES.filter(x=>x.client===CURRENT.k);
     b.innerHTML=`<div class="posq">“O SalesAI não apenas recomenda o que vender — ele aprende com o que a empresa já entregou para estimar a viabilidade do que está prestes a vender.”</div>
@@ -514,13 +548,12 @@ function openJira(){if(isLocked('jira')){showUpgrade();return;}
       <hr style="border:0;border-top:1px solid #eef2f6;margin:12px 0">
       <b style="font-size:12.5px">Próximos passos → tarefas no Jira</b><br>
       <button class="btn primary" style="margin-top:6px" onclick="createJiraTasks()">Criar ${genNext(d).length} tarefas</button>
-      ${mine.length?('<div style="margin-top:10px">'+mine.map(x=>`<div class="jira-issue"><span class="jk">${x.key}</span><span>${x.summary}</span><span class="jst">${x.status}</span></div>`).join('')+'</div>'):''}
-      <div style="margin-top:10px;font-size:11px"><a href="#" onclick="disconnectJira();return false;" style="color:var(--grey)">Desconectar Jira</a></div>`;
+      ${mine.length?('<div style="margin-top:10px">'+mine.map(x=>`<div class="jira-issue"><span class="jk">${x.key}</span><span>${x.summary}</span><span class="jst">${x.status}</span></div>`).join('')+'</div>'):''}`;
   }
   document.getElementById('jiraDlg').showModal();}
 function connectJira(){const v=id=>{const e=document.getElementById(id);return e?e.value.trim():'';};
   JIRA={connected:true,url:v('ji-url')||'suaempresa.atlassian.net',email:v('ji-mail'),project:(v('ji-proj')||'DEL').toUpperCase()};
-  save('salesai_jira',JIRA);initSources('jira');if(CURRENT)generate();openJira();}
+  save('salesai_jira',JIRA);initSources();openJira();}
 function disconnectJira(){JIRA={connected:false,url:'',email:'',project:'DEL'};save('salesai_jira',JIRA);initSources();openJira();}
 function createJiraTasks(){const d=CURRENT.d;genNext(d).forEach(s=>{JIRAISSUES.push({client:CURRENT.k,co:d.co,key:nextJiraKey(),summary:s,status:'To Do'});});
   save('salesai_jira_issues',JIRAISSUES);openJira();}
@@ -544,8 +577,8 @@ function exportPPTX(){if(!CURRENT){alert('Gere um relatório primeiro.');return;
   s.addText('Dores reais',{x:5.2,y:1.0,fontSize:13,bold:true,color:RED});s.addText(r.dores.map(t=>({text:t,options:{bullet:true,fontSize:12}})),{x:5.2,y:1.35,w:4.4,h:3.3});
   s=P.addSlide();s.addText('Briefing 360 — sinais por fonte',{x:0.4,y:0.3,fontSize:20,bold:true,color:NAVY});
   r.signals.length?s.addText(r.signals.map(x=>({text:'['+SOURCES.find(y=>y.id===x.src).nm+'] '+x.t,options:{bullet:true,fontSize:12,paraSpaceAfter:6}})),{x:0.4,y:1.0,w:9.2,h:4}):s.addText('Somente CRM selecionado.',{x:0.4,y:1,fontSize:13,color:GREY});
-  s=P.addSlide();s.addText('Sugestoes estrategicas (IA)',{x:0.4,y:0.3,fontSize:20,bold:true,color:NAVY});
-  s.addText('Perguntas estrategicas',{x:0.4,y:1.0,fontSize:13,bold:true,color:RED});s.addText(genQuestions(d).map(t=>({text:t,options:{bullet:true,fontSize:12}})),{x:0.4,y:1.35,w:4.6,h:3.2});
+  s=P.addSlide();s.addText('Sugestões estratégicas (IA)',{x:0.4,y:0.3,fontSize:20,bold:true,color:NAVY});
+  s.addText('Perguntas estratégicas',{x:0.4,y:1.0,fontSize:13,bold:true,color:RED});s.addText(genQuestions(d).map(t=>({text:t,options:{bullet:true,fontSize:12}})),{x:0.4,y:1.35,w:4.6,h:3.2});
   s.addText('Argumentos de valor',{x:5.2,y:1.0,fontSize:13,bold:true,color:RED});s.addText(genValueArgs(d).map(t=>({text:t,options:{bullet:true,fontSize:12}})),{x:5.2,y:1.35,w:4.4,h:3.2});
   s=P.addSlide();s.addText('Recomendacao & Proximos passos',{x:0.4,y:0.3,fontSize:20,bold:true,color:NAVY});
   s.addText('Solucao recomendada: '+COMPANY.oferta,{x:0.4,y:1.0,w:9.2,fontSize:14,bold:true,color:RED});
@@ -565,7 +598,7 @@ function exportPitchPDF(){if(!CURRENT){alert('Gere um relatório primeiro.');ret
   const gap=h=>{y+=h||8;};
   doc.setFillColor(...NAVY);doc.rect(0,0,W,H,'F');doc.setFillColor(...RED);doc.rect(M,150,60,6,'F');
   doc.setFont('helvetica','bold');doc.setFontSize(23);doc.setTextColor(255,255,255);doc.text('Pitch de Abordagem',M,198);
-  doc.setFontSize(13);doc.setTextColor(...CORAL);doc.text(clean('Como a '+COMPANY.nome+' deve abordar e nao perder a venda'),M,224);
+  doc.setFontSize(13);doc.setTextColor(...CORAL);doc.text(clean('Como a '+COMPANY.nome+' deve abordar e não perder a venda'),M,224);
   doc.setFont('helvetica','bold');doc.setFontSize(18);doc.setTextColor(255,255,255);doc.text(clean(d.co),M,292);
   doc.setFont('helvetica','normal');doc.setFontSize(11);doc.setTextColor(201,215,230);
   doc.splitTextToSize(clean(d.meta+'  |  '+d.contato),CW).forEach((ln,i)=>doc.text(ln,M,314+i*16));
@@ -582,19 +615,19 @@ function exportPitchPDF(){if(!CURRENT){alert('Gere um relatório primeiro.');ret
   para('Principais dores identificadas:',{bold:true});bul(d.crm.dores.concat(d.extraDores||[]));
   h1('2. Quem somos e por que nos');para(COMPANY.quem);gap(4);para('Nossos diferenciais:',{bold:true});bul(COMPANY.dif.length?COMPANY.dif:['(configure em Minha Empresa)']);
   h1('3. Como abordar (tom e postura)');
-  bul(['Postura consultiva: comece pela dor do cliente, nao pelo produto.','Abra com o gancho do momento (expansao/noticia) — mostra que voce fez o dever de casa.','Fale a lingua do varejo: ruptura, giro, conversao em loja e omnichannel.','Traga o decisor tecnico cedo se o bloqueio for integracao.']);
-  h1('4. Perguntas estrategicas (para fazer na reuniao)');bul(genQuestions(d));
+  bul(['Postura consultiva: comece pela dor do cliente, não pelo produto.','Abra com o gancho do momento (expansão/noticia) — mostra que você fez o dever de casa.','Fale a lingua do varejo: ruptura, giro, conversao em loja e omnichannel.','Traga o decisor técnico cedo se o bloqueio for integração.']);
+  h1('4. Perguntas estratégicas (para fazer na reunião)');bul(genQuestions(d));
   h1('5. Argumentos de valor');bul(genValueArgs(d));
   h1('6. Objecoes provaveis e como responder');
-  para('"Ja temos um ERP/sistema de gestao."',{bold:true});para('Resposta: "Otimo — nossa solucao trabalha junto com ele. '+(COMPANY.dif[0]||'Integramos sem troca')+'."');gap(3);
-  para('"Estamos no meio da alta temporada, sem tempo."',{bold:true});para('Resposta: "Por isso proponho um piloto de 30 dias em poucas lojas, com valor ja na primeira semana e sem parar a operacao."');gap(3);
+  para('"Ja temos um ERP/sistema de gestao."',{bold:true});para('Resposta: "Otimo — nossa solução trabalha junto com ele. '+(COMPANY.dif[0]||'Integramos sem troca')+'."');gap(3);
+  para('"Estamos no meio da alta temporada, sem tempo."',{bold:true});para('Resposta: "Por isso proponho um piloto de 30 dias em poucas lojas, com valor já na primeira semana e sem parar a operação."');gap(3);
   para('"O preco parece alto."',{bold:true});para('Resposta: "Vamos olhar o retorno: '+(COMPANY.ben[0]||'o ganho')+' costuma pagar o investimento em poucos meses."');
   h1('7. Fechamento (call to action)');
-  para('Proponha um proximo passo concreto e com data:',{bold:true});
-  bul(['Piloto de 30 dias em um grupo pequeno de lojas.','Metrica combinada (ex.: reducao de ruptura ou aumento de conversao).','Agendar ja a proxima conversa com o decisor.']);
-  para('Fala de fechamento: "Topa rodarmos 30 dias em 3 lojas e medir juntos o impacto? Se nao gerar valor, voce nao segue."');
-  h1('8. O que EVITAR (para nao perder a venda)');
-  bul(['Abrir por funcionalidades antes de entender a dor.','Sugerir trocar o ERP/CRM que a rede ja usa.','Ignorar o decisor tecnico quando o bloqueio e integracao.','Falar preco antes de ancorar o valor/ROI.','Encerrar sem um proximo passo agendado.']);
+  para('Proponha um próximo passo concreto e com data:',{bold:true});
+  bul(['Piloto de 30 dias em um grupo pequeno de lojas.','Metrica combinada (ex.: reducao de ruptura ou aumento de conversao).','Agendar já a próxima conversa com o decisor.']);
+  para('Fala de fechamento: "Topa rodarmos 30 dias em 3 lojas e medir juntos o impacto? Se não gerar valor, você não segue."');
+  h1('8. O que EVITAR (para não perder a venda)');
+  bul(['Abrir por funcionalidades antes de entender a dor.','Sugerir trocar o ERP/CRM que a rede já usa.','Ignorar o decisor técnico quando o bloqueio e integração.','Falar preco antes de ancorar o valor/ROI.','Encerrar sem um próximo passo agendado.']);
   doc.save('Pitch_'+d.co.replace(/[^a-zA-Z0-9]/g,'_')+'_'+COMPANY.nome.replace(/[^a-zA-Z0-9]/g,'_')+'.pdf');}
 
 // ---------- Login (demo) + planos ----------
@@ -603,12 +636,93 @@ function doLogin(){const u=document.getElementById('lg-user').value.trim(),p=doc
   else if(u==='user02'&&p==='67890'){PLAN='pro';}
   else if(u==='user03'&&p==='qwert'){PLAN='free';}
   else{document.getElementById('lg-err').textContent='Usuário ou senha inválidos.';return;}
-  document.getElementById('login').style.display='none';ctx();initSources();if(CURRENT)generate();else renderHome();}
-function logout(){document.getElementById('lg-user').value='';document.getElementById('lg-pass').value='';document.getElementById('lg-err').textContent='';document.getElementById('login').style.display='flex';}
+  document.getElementById('login').style.display='none';ctx();initSources();chatInit();if(CURRENT)generate();else renderHome();}
+function logout(){document.getElementById('lg-user').value='';document.getElementById('lg-pass').value='';document.getElementById('lg-err').textContent='';document.getElementById('login').style.display='flex';chatReset();}
 function showUpgrade(){document.getElementById('upDlg').showModal();}
 
+
+// ---------- Chat em linguagem natural (plano Enterprise) — respostas SIMULADAS por regras ----------
+const CHAT={msgs:[],busy:false};
+const _n=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const chatAllowed=()=>PLAN==='enterprise';
+const CHAT_SUGG=['Qual é a principal dor desta conta e o que devo propor?','Quantas horas e qual prazo para entregar?','Por que a propensão está nesse nível?','Quais perguntas devo fazer na reunião?','Quais são os próximos passos?'];
+function reportFor(k){const d=DB[k];const srcs=selectedSources();const has=s=>srcs.includes(s);const extra=srcs.filter(s=>s!=='crm');
+  const won=LEARN.filter(x=>x.client===k&&x.res==='Ganhou').length,lost=LEARN.filter(x=>x.client===k&&x.res==='Perdeu').length;
+  const raw=d.base+extra.length*6+won*3-lost*3;const score=Math.max(5,Math.min(96,raw));
+  const conf=srcs.length<=1?'Baixa':(extra.length>=3?'Alta':'Média');
+  const dores=[...d.crm.dores];if(extra.length)(d.extraDores||[]).forEach(x=>dores.push(x));
+  const signals=d.signals.filter(s=>has(s.src));
+  return {k,d,srcs,score,raw,conf,dores,signals,won,lost,n:extra.length};}
+function chatInit(){const b=document.getElementById('chatLaunch');if(!b)return;b.style.display='flex';const ok=chatAllowed();
+  b.classList.toggle('locked',!ok);b.innerHTML=ok?'💬 Pergunte ao SalesAI':'🔒 Chat em linguagem natural · Enterprise';chatReset();}
+function chatReset(){CHAT.msgs=[];CHAT.busy=false;const p=document.getElementById('chatPanel');if(p)p.style.display='none';}
+function chatClose(){document.getElementById('chatPanel').style.display='none';}
+function chatToggle(){if(!chatAllowed()){showUpgrade();return;}
+  const p=document.getElementById('chatPanel');if(p.style.display==='flex'){p.style.display='none';return;}
+  p.style.display='flex';if(!CHAT.msgs.length)chatGreet();chatHead();chatRender();setTimeout(()=>document.getElementById('chatIn').focus(),60);}
+function chatHead(){const r=reportFor(document.getElementById('client').value);
+  document.getElementById('chatSub').innerHTML='Conta: <b style="color:#fff">'+r.d.co+'</b> · '+r.srcs.length+' fonte(s) ativa(s): '+r.srcs.map(id=>SOURCES.find(x=>x.id===id).nm).join(', ');}
+function chatGreet(){const r=reportFor(document.getElementById('client').value);
+  CHAT.msgs.push({r:'a',html:'Olá! Estou lendo <b>'+r.d.co+'</b> com '+r.srcs.length+' fonte(s). Pergunte em linguagem natural — por exemplo, sobre dores, produto a propor, propensão, horas para entregar ou próximos passos.'+(r.n===0?'<br><i>Dica: ative “Todas as fontes” para respostas mais ricas.</i>':''),src:r.srcs});}
+function chatRender(){const box=document.getElementById('chatMsgs');
+  box.innerHTML=CHAT.msgs.map(m=>{
+    if(m.r==='u')return '<div class="cm u">'+m.html+'</div>';
+    if(m.typing)return '<div class="cm a typing"><div class="b"><span class="dots"><span></span><span></span><span></span></span> consultando as fontes…</div></div>';
+    const ev=(m.src&&m.src.length)?'<div class="ev">📎 Fontes consultadas: '+m.src.map(id=>{const s=SOURCES.find(x=>x.id===id);return s?'<span class="chip">'+s.ic+' '+s.nm+'</span>':'';}).join('')+'</div>':'';
+    return '<div class="cm a"><div class="b">'+m.html+'</div>'+ev+'</div>';}).join('');
+  box.scrollTop=box.scrollHeight;
+  document.getElementById('chatChips').innerHTML=CHAT.msgs.filter(m=>m.r==='u').length<2?CHAT_SUGG.map((q,i)=>'<button onclick="chatSend(CHAT_SUGG['+i+'])">'+q+'</button>').join(''):'';}
+function chatSend(q){if(CHAT.busy)return;const inp=document.getElementById('chatIn');q=String(q||inp.value||'').trim();if(!q)return;inp.value='';
+  CHAT.msgs.push({r:'u',html:q.replace(/</g,'&lt;')});CHAT.busy=true;CHAT.msgs.push({r:'a',typing:true});chatHead();chatRender();
+  setTimeout(()=>{CHAT.msgs=CHAT.msgs.filter(m=>!m.typing);const a=chatAnswer(q);CHAT.msgs.push({r:'a',html:a.html,src:a.src});AUDIT++;save('salesai_audit',AUDIT);CHAT.busy=false;chatRender();},750);}
+function chatAnswer(q){
+  const nq=_n(q);let k=document.getElementById('client').value;
+  const names={nordeste:['nordeste'],modaviva:['modaviva','moda viva'],superfrescos:['superfrescos','super frescos'],techhouse:['techhouse','tech house'],belacasa:['belacasa','bela casa']};
+  let other=null;for(const kk in names){if(names[kk].some(n=>nq.includes(n)))other=kk;}
+  if(other)k=other;
+  const r=reportFor(k),d=r.d,ex=CLIENT_EXTRA[k]||{ops:[],follow:[]};
+  const used=new Set(['crm']);const li=a=>'<ul>'+a.map(x=>'<li>'+x+'</li>').join('')+'</ul>';
+  const w=re=>re.test(nq);
+  const want={
+    resumo:w(/resum|panorama|visao geral|em poucas palavras|me atualiz|briefing/),
+    dor:w(/\bdor\b|dores|problema|bloqueio|desafio|gargalo|dificuldade/),
+    prod:w(/produto|oferta|propor|oferec|solucao|recomend|vender|pitch|diferencial|argument/),
+    score:w(/propens|score|probabilid|chance|fecham|fechar|confianc|nivel/),
+    viab:w(/hora|esforc|prazo|entreg|viabil|jira|equipe|quanto tempo|estimativ|dimension/),
+    perg:w(/pergunt|diagnost|descoberta|investig/),
+    prox:w(/proximo|passo|agendar|follow|acao|acoes|o que fazer/),
+    sinais:w(/sinal|sinais|noticia|e-mail|email|teams|slack|whatsapp|reuniao|reunioes|transcri|disseram|citaram|ultimas/),
+    ops:w(/oportunidade|contrato|renov|ticket|receita|upsell/),
+    perfil:w(/perfil|quem e |porte|tech|stack|erp|contato|decisor|setor|tamanho|quantas lojas/)};
+  const P={};
+  P.perfil=()=>'<b>'+d.co+'</b> — '+d.meta+'.<br>Setor: '+d.setor+'. Tech stack: '+d.techstack+'. Contato: '+d.contato+'. Funil: '+d.funil+'.';
+  P.dor=()=>{r.signals.forEach(s=>used.add(s.src));return '<b>Principal dor:</b> '+_t(r.dores[0])+'.'+(r.dores.length>1?'<br>Também aparecem:'+li(r.dores.slice(1,4).map(_t)):'');};
+  P.prod=()=>'<b>Recomendação:</b> '+_t(COMPANY.oferta)+' (aderência de '+Math.min(96,r.score+8)+'% à dor principal).<br>'+genWhy(d)+li(genValueArgs(d));
+  P.score=()=>{r.srcs.forEach(s=>used.add(s));const base=d.base+r.n*6;
+    return '<b>Propensão ao fechamento: '+r.score+'%</b> (confiança '+r.conf+').<br>Cálculo: base da conta no CRM ('+d.base+') + 6 pontos por fonte além do CRM ('+r.n+' × 6 = '+(r.n*6)+')'+((r.won||r.lost)?', ajustada pelas reuniões registradas (+'+(r.won*3)+' / −'+(r.lost*3)+')':'')+(r.raw>96?'; limitada a 96%':'')+'.'+(r.n<7?'<br>Conectar mais fontes eleva a propensão.':'');};
+  P.viab=()=>{used.add('jira');const e=jiraEstimate(k),cp=clientProfile(k);
+    return '<b>Viabilidade de entrega:</b> ~'+e.est+' h (faixa '+e.lo+'–'+e.hi+' h), complexidade '+e.compl+', prazo de ~'+e.meses+' meses, equipe de '+e.team+' pessoas e confiança de '+e.conf+'%.<br>Base: '+e.nSim+' projetos similares no Jira, com horas escaladas pelo porte ('+cp.lojas+' lojas):'+li(e.ms.map(x=>x.key+' — '+x.cliente+' ('+x.lojas+' lojas, '+x.horas+' h reais, match '+x.match+'%)'));};
+  P.perg=()=>'<b>Perguntas para a reunião:</b>'+li(genQuestions(d));
+  P.prox=()=>{const all=[...ex.follow,...genNext(d)].filter((x,i,a)=>a.indexOf(x)===i).slice(0,4);return '<b>Próximos passos sugeridos:</b>'+li(all);};
+  P.sinais=()=>{const map={email:/e-mail|email/,teams:/teams/,slack:/slack/,wpp:/whatsapp/,reunioes:/reuniao|reunioes|transcri/,news:/noticia/};
+    const asked=Object.keys(map).filter(id=>map[id].test(nq));
+    if(asked.length){const off=asked.filter(id=>!r.srcs.includes(id));
+      if(off.length){return 'A fonte <b>'+off.map(id=>SOURCES.find(x=>x.id===id).nm).join(', ')+'</b> não está ativa neste relatório. Marque-a no painel ou use “Todas as fontes” para que eu consulte esse canal.';}
+      const sg=r.signals.filter(s=>asked.includes(s.src));sg.forEach(s=>used.add(s.src));
+      return sg.length?'<b>Sinais encontrados:</b>'+li(sg.map(s=>SOURCES.find(x=>x.id===s.src).nm+': '+s.t)):'Não encontrei sinais recentes nessa fonte para esta conta.';}
+    r.signals.forEach(s=>used.add(s.src));
+    return r.signals.length?'<b>Sinais recentes por fonte:</b>'+li(r.signals.map(s=>SOURCES.find(x=>x.id===s.src).nm+': '+s.t)):'Nenhuma fonte externa está ativa. Use “Todas as fontes” para trazer sinais de e-mail, Teams, Slack, reuniões, notícias e WhatsApp.';};
+  P.ops=()=>{const tk=(d.crm.perfil.find(x=>/Ticket/i.test(x))||'');return '<b>Oportunidades abertas:</b>'+li(ex.ops)+(tk?'<br>'+tk:'');};
+  P.resumo=()=>{r.srcs.forEach(s=>used.add(s));return '<b>Resumo de '+d.co+'</b>'+li([d.meta,'Principal dor: '+_t(r.dores[0])+'.','Propensão ao fechamento: '+r.score+'% (confiança '+r.conf+').','Produto recomendado: '+_t(COMPANY.oferta)+'.','Próximo passo: '+_t((ex.follow[0]||genNext(d)[0]))+'.']);};
+  let order=want.resumo?['resumo']:['dor','prod','score','viab','perg','prox','sinais','ops','perfil'].filter(x=>want[x]).slice(0,2);
+  let html;
+  if(!order.length){html='Posso ajudar com: <b>dores</b>, <b>produto a propor</b>, <b>propensão ao fechamento</b>, <b>viabilidade de entrega</b> (horas, prazo e equipe), <b>perguntas para a reunião</b>, <b>próximos passos</b>, <b>sinais por fonte</b> e <b>oportunidades</b>. Tente, por exemplo: “Quais são os sinais mais recentes?”.';}
+  else{html=order.map(x=>P[x]()).join('<br><br>');}
+  if(other&&other!==document.getElementById('client').value)html='<i>Conta: '+d.co+'</i><br>'+html;
+  return {html,src:[...used]};}
+
 // init
-ctx();initClients();initSources();renderHome();
+ctx();initClients();initSources();renderHome();chatInit();
 function initClients(){const sel=document.getElementById('client');ORDER.forEach(k=>{const o=document.createElement('option');o.value=k;o.textContent=DB[k].co;sel.appendChild(o);});}
 </script>
 </body>
